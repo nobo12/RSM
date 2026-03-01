@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>RSM LIFE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#080812;color:#E2E8F0;font-family:Arial,sans-serif;min-height:100vh}
+#app{max-width:420px;margin:0 auto}
+input,button{font-family:Arial,sans-serif}
+.screen{display:none}.screen.active{display:block;min-height:100vh}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:16px;margin-bottom:13px}
+input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#E2E8F0;border-radius:10px;padding:11px 13px;width:100%;font-size:13px;outline:none;margin-bottom:10px}
+input:focus{border-color:rgba(99,102,241,.6)}input::placeholder{color:#475569}
+.btn{width:100%;padding:13px;border-radius:12px;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:9px}
+.btn-blue{background:linear-gradient(135deg,#6366F1,#8B5CF6)}
+.btn-green{background:linear-gradient(135deg,#10B981,#059669)}
+.btn-amber{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.lnk{background:none;border:none;color:#6366F1;font-size:12px;font-weight:700;cursor:pointer;text-decoration:underline}
+.fm{padding:9px 13px;border-radius:9px;margin-bottom:11px;font-size:12px;display:none}
+.fm.ok{background:rgba(16,185,129,.12);color:#34D399;border:1px solid rgba(16,185,129,.3)}
+.fm.er{background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.3)}
+label{font-size:11px;color:#94A3B8;display:block;margin-bottom:4px}
+.sttl{font-size:12px;font-weight:700;color:#A78BFA;margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+.tabs{display:flex;gap:3px;overflow-x:auto}.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;padding:7px 2px;border-radius:8px;border:none;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;min-width:48px;background:rgba(255,255,255,.05);color:#475569}
+.tab.on{color:#fff}
+.tc{display:none;padding:13px 14px 90px}.tc.on{display:block}
+.stat{background:rgba(255,255,255,.04);border-radius:11px;padding:12px;border:1px solid rgba(255,255,255,.06);text-align:center}
+.sv{font-size:16px;font-weight:700;margin-bottom:3px}.sl{font-size:10px;color:#64748B}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}.row:last-child{border-bottom:none}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0}
+.av img{width:100%;height:100%;object-fit:cover}
+.bdg{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.b-ok{background:rgba(16,185,129,.15);color:#34D399}
+.b-pn{background:rgba(245,158,11,.15);color:#FCD34D}
+.b-rj{background:rgba(239,68,68,.15);color:#F87171}
+.mr{display:flex;align-items:center;padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.05)}.mr:last-child{border-bottom:none}
+.bk{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#94A3B8;border-radius:8px;padding:5px 11px;font-size:11px;cursor:pointer;margin-bottom:13px;display:inline-block}
+.shdr{background:rgba(8,8,18,.97);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:50;padding:11px 14px 9px}
+.lo{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:7px;color:#F87171;padding:5px 8px;font-size:10px;cursor:pointer}
+.mtr{display:flex;gap:7px;margin-bottom:12px}
+.mb{flex:1;padding:8px 3px;border-radius:9px;border:2px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#64748B;font-size:11px;font-weight:700;cursor:pointer;text-align:center}
+.mb.on{border-color:#6366F1;background:rgba(99,102,241,.15);color:#A78BFA}
+.acd{background:rgba(255,255,255,.03);border-radius:11px;border:1px solid rgba(255,255,255,.07);margin-bottom:8px;overflow:hidden;cursor:pointer}
+.ahdr{display:flex;align-items:center;justify-content:space-between;padding:11px 13px}
+.abdy{display:none;padding:11px 13px;border-top:1px solid rgba(255,255,255,.07)}
+.vbtn{width:100%;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px}
+.rbtn{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.1);color:#F87171;font-size:11px;font-weight:700;cursor:pointer;margin-top:5px}
+.ltog{display:flex;background:rgba(255,255,255,.06);border-radius:20px;padding:2px;border:1px solid rgba(255,255,255,.1)}
+.lbtn{padding:4px 10px;border-radius:18px;border:none;font-size:10px;font-weight:700;cursor:pointer;background:none;color:#64748B}
+.lbtn.on{background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- LOGIN -->
+<div id="s-login" class="screen active" style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px 20px">
+<div style="width:100%">
+<div style="display:flex;justify-content:center;margin-bottom:16px">
+<div class="ltog"><button class="lbtn on" onclick="setL('en')">English</button><button class="lbtn" onclick="setL('bn')">বাংলা</button></div>
+</div>
+<div style="text-align:center;margin-bottom:20px">
+<div style="font-size:30px;font-weight:900;letter-spacing:3px;margin-bottom:5px"><span style="color:#1E3A8A">RSM</span><span style="color:#0EA5E9"> LIFE</span></div>
+<div id="t-tag1" style="color:#F59E0B;font-size:13px;font-weight:700;margin-bottom:3px">✨ Change Your Life</div>
+<div id="t-tag2" style="color:#475569;font-size:11px;margin-bottom:2px">Build your future — Build your team</div>
+<div id="t-tag3" style="color:#334155;font-size:10px;font-style:italic">Success starts here</div>
+</div>
+<div class="card">
+<div id="t-welcome" style="font-size:15px;font-weight:700;color:#E2E8F0;margin-bottom:14px">Welcome 👋</div>
+<div class="fm" id="lm"></div>
+<label id="t-unLabel">Username / Mobile Number</label>
+<input id="li" placeholder="Mobile or referral code" onkeydown="if(event.key==='Enter')doLogin()"/>
+<label id="t-pwLabel">Password</label>
+<div style="position:relative;margin-bottom:10px">
+<input id="lp" type="password" placeholder="Your password" style="margin-bottom:0;padding-right:42px" onkeydown="if(event.key==='Enter')doLogin()"/>
+<button onclick="tp('lp',this)" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#64748B;cursor:pointer">👁️</button>
+</div>
+<div style="display:flex;justify-content:flex-end;margin-bottom:11px">
+<button class="lnk" id="t-forgotPw" onclick="show('s-fp')">Forgot Password?</button>
+</div>
+<button class="btn btn-blue" id="t-loginBtn" onclick="doLogin()">Login →</button>
+<div style="text-align:center;margin-top:5px">
+<span id="t-newHere" style="font-size:12px;color:#475569">New here? </span>
+<button class="lnk" id="t-regLink" onclick="show('s-reg')">Register</button>
+</div>
+</div></div></div>
+
+<!-- FORGOT PW -->
+<div id="s-fp" class="screen" style="padding:24px 20px">
+<button class="bk" onclick="show('s-login')">← <span id="t-back1">Back</span></button>
+<div class="card">
+<div id="t-resetTitle" style="font-size:15px;font-weight:700;color:#E2E8F0;margin-bottom:13px">🔍 Password Reset</div>
+<div class="fm" id="fpm"></div>
+<div id="fps1">
+<label id="t-regMobile">Registered Mobile</label><input id="fpph" type="tel" placeholder="01XXXXXXXXX"/>
+<label>NID</label><input id="fpni" placeholder="NID Number"/>
+<button class="btn btn-blue" id="t-verifyBtn" onclick="fpv()">Verify Identity →</button>
+</div>
+<div id="fps2" style="display:none">
+<div id="fpuc" style="background:rgba(16,185,129,.08);border-radius:9px;padding:10px;margin-bottom:12px;border:1px solid rgba(16,185,129,.2);font-size:12px;color:#34D399"></div>
+<label id="t-newPw">New Password</label><input id="fpnp" type="password" placeholder="Min 6 characters"/>
+<label id="t-confirmPw">Confirm Password</label><input id="fpcp" type="password" placeholder="Re-enter password"/>
+<button class="btn btn-green" id="t-changePwBtn" onclick="fpr()">✅ Change Password</button>
+</div></div></div>
+
+<!-- REGISTER -->
+<div id="s-reg" class="screen" style="padding:24px 20px 80px">
+<button class="bk" onclick="show('s-login')">← <span id="t-back2">Back</span></button>
+<div id="rbanner" style="background:rgba(245,158,11,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(245,158,11,.2);font-size:11px;color:#FCD34D">
+<span id="t-noRefBanner">ℹ️ Without referral code → Registered under ADMIN</span>
+</div>
+<div class="fm" id="rm"></div>
+<div class="card">
+<div class="sttl" id="t-persInfo">👤 Personal Information</div>
+<label id="t-fullName">Full Name *</label><input id="rn" placeholder="Your full name"/>
+<label id="t-mobile">Mobile Number *</label><input id="rph" type="tel" placeholder="01XXXXXXXXX"/>
+<label>NID *</label><input id="rni" type="number" placeholder="NID Number"/>
+<label id="t-refCode">Referral Code (Optional)</label>
+<input id="rrf" placeholder="Leave empty if none" oninput="chkrf()" style="text-transform:uppercase;font-family:monospace"/>
+<label id="t-pwLabel2">Password *</label>
+<div style="position:relative;margin-bottom:10px"><input id="rpw" type="password" placeholder="Min 6 characters" style="margin-bottom:0;padding-right:42px"/><button onclick="tp('rpw',this)" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#64748B;cursor:pointer">👁️</button></div>
+<label id="t-confirmPw2">Confirm Password *</label><input id="rcp" type="password" placeholder="Re-enter password"/>
+<div style="display:flex;justify-content:space-between;background:rgba(99,102,241,.08);border-radius:9px;padding:10px 13px;border:1px solid rgba(99,102,241,.18);margin-bottom:13px">
+<span id="t-reqDep" style="font-size:12px;color:#94A3B8">Required Deposit</span><b style="font-size:16px;color:#6366F1">৳5,000</b>
+</div>
+<button class="btn btn-green" id="t-completeReg" onclick="doReg()">✅ Complete Registration</button>
+</div></div>
+<!-- USER APP -->
+<div id="s-app" class="screen">
+<div class="shdr">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="display:flex;align-items:center;gap:8px">
+<div style="position:relative">
+<div id="hav" class="av" style="width:32px;height:32px;font-size:12px;border:2px solid rgba(99,102,241,.4)"></div>
+<label style="position:absolute;bottom:-2px;right:-2px;width:13px;height:13px;border-radius:50%;background:#6366F1;border:2px solid #080812;display:flex;align-items:center;justify-content:center;font-size:7px;cursor:pointer">📷<input type="file" accept="image/*" onchange="upav(event)" style="display:none"/></label>
+</div>
+<div><div id="hnm" style="font-size:12px;font-weight:700;color:#E2E8F0"></div><div id="hcd" style="font-size:9px;color:#374151;font-family:monospace"></div></div>
+</div>
+<div style="display:flex;align-items:center;gap:5px">
+<div class="ltog"><button class="lbtn on" onclick="setL('en')" style="padding:3px 7px;font-size:9px">EN</button><button class="lbtn" onclick="setL('bn')" style="padding:3px 7px;font-size:9px">বাং</button></div>
+<div style="text-align:right"><div id="hbl" style="font-size:12px;font-weight:700;color:#10B981">৳0</div><div id="t-bal" style="font-size:8px;color:#374151">Balance</div></div>
+<button class="lo" id="t-logout" onclick="logout()">Logout</button>
+</div>
+</div>
+<div class="tabs" id="atabs">
+<button class="tab on" style="background:linear-gradient(135deg,#6366F1,#8B5CF6)" onclick="atab('profile',this)" id="tt-profile">👤 Profile</button>
+<button class="tab" onclick="atab('deposit',this)" id="tt-deposit">💳 Deposit</button>
+<button class="tab" onclick="atab('comm',this)" id="tt-comm">💰 Commission</button>
+<button class="tab" onclick="atab('withdraw',this)" id="tt-wd">🏧 Withdraw</button>
+<button class="tab" onclick="atab('hist',this)" id="tt-hist">📋 History</button>
+<button class="tab" onclick="atab('tree',this)" id="tt-tree">🌳 Network</button>
+</div></div>
+<div id="afl" style="padding:0 14px"></div>
+
+<!-- Profile -->
+<div id="tc-profile" class="tc on">
+<div style="background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:15px;padding:17px;margin-bottom:12px;border:1px solid rgba(99,102,241,.3)">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="position:relative">
+<div id="pav" class="av" style="width:58px;height:58px;font-size:20px;border:3px solid rgba(255,255,255,.2)"></div>
+<label style="position:absolute;bottom:0;right:0;width:18px;height:18px;border-radius:50%;background:#6366F1;border:2px solid #080812;display:flex;align-items:center;justify-content:center;font-size:8px;cursor:pointer">📷<input type="file" accept="image/*" onchange="upav(event)" style="display:none"/></label>
+</div>
+<div><div id="pnm" style="font-size:14px;font-weight:700;color:#fff"></div><div id="psb" style="font-size:9px;color:rgba(255,255,255,.4);margin-bottom:5px"></div><div id="pbdg" style="display:inline-block;background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.3);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#FBB924"></div></div>
+</div></div>
+<!-- Combined Balance Card -->
+<div style="background:linear-gradient(135deg,#0F2027,#203A43);border-radius:13px;padding:14px 16px;margin-bottom:12px;border:1px solid rgba(16,185,129,.25)">
+<div id="t-totBal" style="font-size:10px;color:#6EE7B7;margin-bottom:3px">Total Balance (Commission + Earnings)</div>
+<div id="p-bal" style="font-size:26px;font-weight:700;color:#10B981">৳0</div>
+<div id="p-bsub" style="font-size:9px;color:#475569;margin-top:2px"></div>
+</div>
+<!-- Referral Code -->
+<div style="background:linear-gradient(135deg,#064E3B,#065F46);border-radius:11px;padding:11px 13px;margin-bottom:12px;border:1px solid rgba(52,211,153,.2)">
+<div id="t-refTitle" style="font-size:10px;color:#6EE7B7;margin-bottom:4px;font-weight:700">🎁 Your Referral Code (Max 4 referrals)</div>
+<div style="display:flex;align-items:center;justify-content:space-between">
+<span id="rcd" style="font-size:20px;font-weight:700;color:#fff;letter-spacing:3px;font-family:monospace"></span>
+<button onclick="cprc()" id="t-copyBtn" style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.35);color:#34D399;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">📋 Copy</button>
+</div>
+<div id="ref-slots" style="font-size:9px;color:rgba(52,211,153,.6);margin-top:3px"></div>
+</div>
+<div class="g2" id="psts"></div>
+<div style="background:rgba(255,255,255,.02);border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.05)" id="pinf"></div>
+</div>
+
+<!-- Deposit -->
+<div id="tc-deposit" class="tc">
+<div class="card"><div class="sttl" id="t-agentNums">📱 Payment Agent Numbers</div><div id="agacc"></div></div>
+<div class="card">
+<div class="sttl" id="t-subDep">💸 Submit Deposit</div>
+<div id="t-selMethod" style="font-size:11px;color:#94A3B8;margin-bottom:8px">Select Payment Method</div>
+<div class="mtr">
+<button class="mb on" onclick="smth('bkash',this,'dep')">💗<br>bKash</button>
+<button class="mb" onclick="smth('nagad',this,'dep')">🟠<br>Nagad</button>
+<button class="mb" onclick="smth('rocket',this,'dep')">🚀<br>Rocket</button>
+</div>
+<div class="fm" id="dm"></div>
+<label id="t-txId">Transaction ID *</label><input id="dtx" placeholder="TX ID from payment"/>
+<label id="t-senderMob">Your Mobile Number *</label><input id="dph" type="tel" placeholder="01XXXXXXXXX"/>
+<label id="t-amount">Amount (৳)</label><input id="damt" type="number" value="5000"/>
+<div id="t-depNote" style="background:rgba(16,185,129,.07);border-radius:8px;padding:8px 11px;margin-bottom:12px;border:1px solid rgba(16,185,129,.15);font-size:11px;color:#6EE7B7">ℹ️ Commission will be distributed after admin verification</div>
+<button class="btn btn-blue" id="t-subDepBtn" onclick="subdep()">📤 Submit Deposit</button>
+</div></div>
+
+<!-- Commission -->
+<div id="tc-comm" class="tc">
+<div style="background:linear-gradient(135deg,#0F2027,#203A43);border-radius:15px;padding:16px;margin-bottom:12px;border:1px solid rgba(16,185,129,.2)">
+<div id="t-totalComm" style="font-size:10px;color:#6EE7B7;margin-bottom:2px">Total Commission Earned</div>
+<div id="ctot" style="font-size:26px;font-weight:700;color:#10B981">৳0</div>
+<div id="ctm" style="font-size:10px;color:#475569;margin-top:2px"></div>
+</div>
+<div style="background:rgba(255,255,255,.02);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.05);margin-bottom:12px">
+<div id="t-chainBreak" style="padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;font-weight:700;color:#A78BFA">⛓️ Chain Commission Breakdown</div>
+<div id="cbrk"></div></div>
+<div style="background:rgba(245,158,11,.07);border-radius:11px;padding:12px;border:1px solid rgba(245,158,11,.15)">
+<div id="t-commChart" style="font-size:11px;font-weight:700;color:#FCD34D;margin-bottom:8px">📊 Commission Chart (4 referrals each)</div>
+<div id="cchart"></div>
+<div id="t-commNote" style="margin-top:8px;font-size:10px;color:#475569;line-height:1.5">💡 <b style="color:#FCD34D">88% commission</b> distributed to members. <b style="color:#F59E0B">12%</b> to admin. Level 2 (16 members) alone can earn ৳48,000!</div>
+</div></div>
+
+<!-- Withdraw -->
+<div id="tc-withdraw" class="tc">
+<div style="background:rgba(255,255,255,.02);border-radius:11px;padding:11px 13px;margin-bottom:12px;border:1px solid rgba(99,102,241,.2)">
+<div id="t-availBal" style="font-size:10px;color:#94A3B8;margin-bottom:2px">Available Balance</div>
+<div id="wbal" style="font-size:22px;font-weight:700;color:#10B981">৳0</div>
+<div id="t-minWd" style="font-size:9px;color:#475569;margin-top:2px">Minimum withdrawal: ৳1,000</div>
+</div>
+<div class="card">
+<div class="sttl" id="t-wdReq">🏧 Withdrawal Request</div>
+<div class="mtr">
+<button class="mb on" onclick="smth('bkash',this,'wd')">💗<br>bKash</button>
+<button class="mb" onclick="smth('nagad',this,'wd')">🟠<br>Nagad</button>
+<button class="mb" onclick="smth('rocket',this,'wd')">🚀<br>Rocket</button>
+</div>
+<div class="fm" id="wm"></div>
+<label id="t-wdAmt">Amount (৳) *</label><input id="wamt" type="number" placeholder="Min ৳1,000"/>
+<label id="t-acctNum">Mobile / Account Number *</label><input id="wnum" type="tel" placeholder="01XXXXXXXXX"/>
+<label id="t-secPin">Security Password *</label>
+<div style="position:relative;margin-bottom:10px"><input id="wpin" type="password" placeholder="Your login password" style="margin-bottom:0;padding-right:42px"/><button onclick="tp('wpin',this)" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#64748B;cursor:pointer">👁️</button></div>
+<div id="t-wdNote" style="background:rgba(245,158,11,.07);border-radius:8px;padding:8px 11px;margin-bottom:12px;border:1px solid rgba(245,158,11,.15);font-size:11px;color:#FCD34D">⚠️ You will be notified when admin sends payment</div>
+<button class="btn btn-amber" id="t-wdBtn" onclick="subwd()">🏧 Request Withdrawal</button>
+</div>
+<div class="card"><div class="sttl" id="t-wdHist">📋 Withdrawal History</div><div id="wdhist"></div></div>
+</div>
+
+<!-- History -->
+<div id="tc-hist" class="tc">
+<div style="display:flex;gap:5px;margin-bottom:12px">
+<button id="hbt-d" onclick="htab('d',this)" style="flex:1;padding:7px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;font-size:10px;font-weight:700;cursor:pointer">💳 <span id="t-depTab">Deposits</span></button>
+<button id="hbt-c" onclick="htab('c',this)" style="flex:1;padding:7px;border-radius:8px;border:none;background:rgba(255,255,255,.05);color:#475569;font-size:10px;font-weight:700;cursor:pointer">💰 <span id="t-commTab">Commissions</span></button>
+<button id="hbt-w" onclick="htab('w',this)" style="flex:1;padding:7px;border-radius:8px;border:none;background:rgba(255,255,255,.05);color:#475569;font-size:10px;font-weight:700;cursor:pointer">🏧 <span id="t-wdTab">Withdrawals</span></button>
+</div>
+<div id="hlist"></div></div>
+
+<!-- Network / Tree -->
+<div id="tc-tree" class="tc">
+<div id="tsel" style="display:none;background:rgba(99,102,241,.08);border-radius:11px;padding:9px 12px;margin-bottom:11px;border:1px solid rgba(99,102,241,.2)"></div>
+<div style="background:rgba(255,255,255,.02);border-radius:12px;padding:12px 5px;border:1px solid rgba(255,255,255,.05);overflow-x:auto;min-height:140px">
+<div id="tw" style="display:flex;justify-content:center;min-width:max-content;padding:6px 0"></div>
+</div>
+<div id="tleg" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+<div id="t-treeNote" style="margin-top:8px;font-size:10px;color:#374151;text-align:center">👆 Tap a member to see details (you see only your downline)</div>
+</div>
+</div><!-- end s-app -->
+<!-- ADMIN -->
+<div id="s-admin" class="screen">
+<div class="shdr">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="display:flex;align-items:center;gap:8px">
+<div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:15px">👑</div>
+<div><div style="font-size:12px;font-weight:700;color:#F59E0B">RSM LIFE — Admin</div><div id="adbl" style="font-size:9px;color:#475569">Balance: ৳0</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:5px">
+<div class="ltog"><button class="lbtn on" onclick="setL('en')" style="padding:3px 7px;font-size:9px">EN</button><button class="lbtn" onclick="setL('bn')" style="padding:3px 7px;font-size:9px">বাং</button></div>
+<div id="pndb" style="display:none;background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);border-radius:7px;padding:3px 8px;font-size:10px;color:#F87171;font-weight:700"></div>
+<button class="lo" id="t-admLogout" onclick="logout()">Logout</button>
+</div>
+</div>
+<div class="tabs">
+<button class="tab on" style="background:linear-gradient(135deg,#F59E0B,#D97706)" onclick="admtab('users',this)" id="att-users">👥 Members</button>
+<button class="tab" onclick="admtab('deps',this)" id="att-deps">💳 Deposits</button>
+<button class="tab" onclick="admtab('wds',this)" id="att-wds">🏧 Withdraw</button>
+<button class="tab" onclick="admtab('agnts',this)" id="att-agnts">📱 Agents</button>
+<button class="tab" onclick="admtab('comm',this)" id="att-comm">⛓️ Commission</button>
+<button class="tab" onclick="admtab('sets',this)" id="att-sets">⚙️ Settings</button>
+</div></div>
+<div id="adfl" style="padding:0 14px;margin-top:7px"></div>
+<div id="atc-users" class="tc on"><div id="aedit" style="display:none"></div><div id="alist"></div></div>
+<div id="atc-deps" class="tc"><div id="adeps"></div></div>
+<div id="atc-wds" class="tc"><div id="awds"></div></div>
+<div id="atc-agnts" class="tc"><div id="aagnts"></div></div>
+<div id="atc-comm" class="tc"><div id="acomm"></div></div>
+<div id="atc-sets" class="tc"><div id="asets"></div></div>
+</div>
+</div><!-- end #app -->
+<script>
+const T={en:{
+tag1:"✨ Change Your Life",tag2:"Build your future — Build your team",tag3:"Success starts here",
+welcome:"Welcome 👋",unLabel:"Username / Mobile Number",pwLabel:"Password",
+loginPh:"Mobile or referral code",passPh:"Your password",
+forgotPw:"Forgot Password?",loginBtn:"Login →",newHere:"New here? ",regLink:"Register",
+back:"Back",resetTitle:"🔍 Password Reset",regMobile:"Registered Mobile",
+verifyBtn:"Verify Identity →",newPw:"New Password",confirmPw:"Confirm Password",changePwBtn:"✅ Change Password",
+noRefBanner:"ℹ️ Without referral code → Registered under ADMIN",
+persInfo:"👤 Personal Information",fullName:"Full Name *",mobile:"Mobile Number *",
+refCode:"Referral Code (Optional)",pwLabel2:"Password *",confirmPw2:"Confirm Password *",
+reqDep:"Required Deposit",completeReg:"✅ Complete Registration",
+totBal:"Total Balance (Commission + Earnings)",
+refTitle:"🎁 Your Referral Code (Max 4 referrals)",copyBtn:"📋 Copy",
+bal:"Balance",logout:"Logout",
+tt_profile:"👤 Profile",tt_deposit:"💳 Deposit",tt_comm:"💰 Commission",
+tt_wd:"🏧 Withdraw",tt_hist:"📋 History",tt_tree:"🌳 Network",
+agentNums:"📱 Payment Agent Numbers",subDep:"💸 Submit Deposit",
+selMethod:"Select Payment Method",txId:"Transaction ID *",senderMob:"Your Mobile Number *",
+amount:"Amount (৳)",depNote:"ℹ️ Commission distributed after admin verification",subDepBtn:"📤 Submit Deposit",
+totalComm:"Total Commission Earned",chainBreak:"⛓️ Chain Commission Breakdown",
+commChart:"📊 Commission Chart (4 referrals each)",
+commNote:"💡 88% commission to members. 12% to admin. Level 2 (16 members) can earn ৳48,000!",
+availBal:"Available Balance",minWd:"Minimum withdrawal: ৳1,000",
+wdReq:"🏧 Withdrawal Request",wdAmt:"Amount (৳) *",acctNum:"Mobile / Account Number *",
+secPin:"Security Password *",wdNote:"⚠️ You will be notified when admin sends payment",wdBtn:"🏧 Request Withdrawal",
+wdHist:"📋 Withdrawal History",depTab:"Deposits",commTab:"Commissions",wdTab:"Withdrawals",
+treeNote:"👆 Tap a member to see details (you see only your downline)",
+att_users:"👥 Members",att_deps:"💳 Deposits",att_wds:"🏧 Withdraw",
+att_agnts:"📱 Agents",att_comm:"⛓️ Commission",att_sets:"⚙️ Settings",admLogout:"Logout",
+pending:"⏳ Pending",confirmed:"✅ Confirmed",rejected:"❌ Rejected",success:"✅ Success",
+verifyDist:"✅ Verify & Distribute Commission",cancelBtn:"❌ Cancel",paySuccess:"✅ Mark Payment Successful",
+totalMembers:"Total Members",totalDeposits:"Total Deposits",adminBalance:"Admin Balance (12% profit)",
+commEditor:"⛓️ Edit Commission Rates",commEdNote:"Adjust each level's commission %.",
+saveComm:"💾 Save Commission Rates",totCommLabel:"Total Commission",adminProfit:"Admin Profit",
+saveAgents:"💾 Save",agentNumber:"Agent Number",agentName:"Display Name",
+editMember:"Edit Member",persInfo2:"👤 Personal Info",finInfo:"💰 Financial Info",
+currPw:"Current Password (visible)",newPwChange:"New Password (to change)",saveChanges:"✅ Save Changes",
+level:"Level",id:"ID",rank:"Rank",teamSize:"Team Size",referrals:"Referrals",
+noDeposit:"No deposits yet",noComm:"No commission earned yet",noWd:"No withdrawals yet",
+slotsUsed:"Referral slots used",allTx:"All Transactions",allWd:"All Withdrawals"
+},bn:{
+tag1:"✨ আপনার জীবন বদলে দিন",tag2:"আপনার ভবিষ্যৎ গড়ুন — আপনার দল গড়ুন",tag3:"সাফল্য এখান থেকেই শুরু",
+welcome:"স্বাগতম 👋",unLabel:"ইউজারনেম / মোবাইল নম্বর",pwLabel:"পাসওয়ার্ড",
+loginPh:"মোবাইল বা রেফারেল কোড",passPh:"আপনার পাসওয়ার্ড",
+forgotPw:"পাসওয়ার্ড ভুলে গেছেন?",loginBtn:"লগইন করুন →",newHere:"নতুন? ",regLink:"রেজিস্ট্রেশন করুন",
+back:"ফিরুন",resetTitle:"🔍 পাসওয়ার্ড রিসেট",regMobile:"নিবন্ধিত মোবাইল",
+verifyBtn:"পরিচয় যাচাই করুন →",newPw:"নতুন পাসওয়ার্ড",confirmPw:"কনফার্ম পাসওয়ার্ড",changePwBtn:"✅ পাসওয়ার্ড পরিবর্তন করুন",
+noRefBanner:"ℹ️ রেফার কোড ছাড়া → সরাসরি ADMIN এর অধীনে",
+persInfo:"👤 ব্যক্তিগত তথ্য",fullName:"পুরো নাম *",mobile:"মোবাইল নম্বর *",
+refCode:"রেফারেল কোড (ঐচ্ছিক)",pwLabel2:"পাসওয়ার্ড *",confirmPw2:"কনফার্ম পাসওয়ার্ড *",
+reqDep:"প্রয়োজনীয় ডিপোজিট",completeReg:"✅ রেজিস্ট্রেশন সম্পন্ন করুন",
+totBal:"মোট ব্যালেন্স (কমিশন + আয়)",
+refTitle:"🎁 আপনার রেফারেল কোড (সর্বোচ্চ ৪ জন)",copyBtn:"📋 কপি",
+bal:"ব্যালেন্স",logout:"লগআউট",
+tt_profile:"👤 প্রোফাইল",tt_deposit:"💳 ডিপোজিট",tt_comm:"💰 কমিশন",
+tt_wd:"🏧 উত্তোলন",tt_hist:"📋 হিস্ট্রি",tt_tree:"🌳 নেটওয়ার্ক",
+agentNums:"📱 পেমেন্ট এজেন্ট নম্বর",subDep:"💸 ডিপোজিট সাবমিট করুন",
+selMethod:"পেমেন্ট পদ্ধতি বেছে নিন",txId:"ট্রানজেকশন আইডি *",senderMob:"আপনার মোবাইল নম্বর *",
+amount:"পরিমাণ (৳)",depNote:"ℹ️ অ্যাডমিন ভেরিফাই করলে কমিশন বিতরণ হবে",subDepBtn:"📤 ডিপোজিট সাবমিট করুন",
+totalComm:"মোট কমিশন আয়",chainBreak:"⛓️ চেইন কমিশন বিভাজন",
+commChart:"📊 কমিশন চার্ট (৪ জন করে রেফার)",
+commNote:"💡 ৮৮% কমিশন সদস্যদের মধ্যে। ১২% অ্যাডমিনের। ২য় লেভেল (১৬ জন) থেকে ৳৪৮,০০০ আয় সম্ভব!",
+availBal:"উত্তোলনযোগ্য ব্যালেন্স",minWd:"সর্বনিম্ন উত্তোলন: ৳১,০০০",
+wdReq:"🏧 উত্তোলন রিকোয়েস্ট",wdAmt:"পরিমাণ (৳) *",acctNum:"মোবাইল / একাউন্ট নম্বর *",
+secPin:"নিরাপত্তা পাসওয়ার্ড *",wdNote:"⚠️ অ্যাডমিন পেমেন্ট করলে নোটিফিকেশন পাবেন",wdBtn:"🏧 উত্তোলন রিকোয়েস্ট করুন",
+wdHist:"📋 উত্তোলন হিস্ট্রি",depTab:"ডিপোজিট",commTab:"কমিশন আয়",wdTab:"উত্তোলন",
+treeNote:"👆 নোড ট্যাপ করলে সদস্যের তথ্য দেখুন (শুধু নিজের ডাউনলাইন)",
+att_users:"👥 সদস্য",att_deps:"💳 ডিপোজিট",att_wds:"🏧 উত্তোলন",
+att_agnts:"📱 এজেন্ট",att_comm:"⛓️ কমিশন",att_sets:"⚙️ সেটিংস",admLogout:"লগআউট",
+pending:"⏳ অপেক্ষমাণ",confirmed:"✅ নিশ্চিত",rejected:"❌ বাতিল",success:"✅ সফল",
+verifyDist:"✅ ভেরিফাই করুন — কমিশন বিতরণ",cancelBtn:"❌ বাতিল করুন",paySuccess:"✅ পেমেন্ট সফল করুন",
+totalMembers:"মোট সদস্য",totalDeposits:"মোট ডিপোজিট",adminBalance:"অ্যাডমিন ব্যালেন্স (১২% প্রফিট)",
+commEditor:"⛓️ কমিশন হার পরিবর্তন করুন",commEdNote:"প্রতিটি লেভেলের কমিশন % পরিবর্তন করুন।",
+saveComm:"💾 কমিশন হার সংরক্ষণ করুন",totCommLabel:"মোট কমিশন",adminProfit:"অ্যাডমিন প্রফিট",
+saveAgents:"💾 সংরক্ষণ করুন",agentNumber:"এজেন্ট নম্বর",agentName:"প্রদর্শন নাম",
+editMember:"সদস্য সম্পাদনা",persInfo2:"👤 ব্যক্তিগত তথ্য",finInfo:"💰 আর্থিক তথ্য",
+currPw:"বর্তমান পাসওয়ার্ড (দৃশ্যমান)",newPwChange:"নতুন পাসওয়ার্ড (পরিবর্তন করতে)",saveChanges:"✅ পরিবর্তন সংরক্ষণ করুন",
+level:"লেভেল",id:"আইডি",rank:"র‍্যাংক",teamSize:"টিম সাইজ",referrals:"রেফারেল",
+noDeposit:"কোনো ডিপোজিট নেই",noComm:"কোনো কমিশন আয় নেই",noWd:"কোনো উত্তোলন নেই",
+slotsUsed:"রেফারেল স্লট ব্যবহৃত",allTx:"সকল ট্রানজেকশন",allWd:"সকল উত্তোলন"
+}};
+let L='en';
+const t=k=>T[L][k]||T.en[k]||k;
+
+function setL(lang){
+  L=lang;
+  // toggle buttons
+  document.querySelectorAll('.lbtn').forEach(b=>{
+    b.classList.toggle('on', b.textContent.trim()===(lang==='en'?'English':'বাংলা')||b.textContent.trim()===(lang==='en'?'EN':'বাং'));
+  });
+  // update all t-* elements
+  const ids=['tag1','tag2','tag3','welcome','unLabel','pwLabel','forgotPw','loginBtn','newHere','regLink',
+    'back1','back2','resetTitle','regMobile','verifyBtn','newPw','confirmPw','changePwBtn','noRefBanner',
+    'persInfo','fullName','mobile','refCode','pwLabel2','confirmPw2','reqDep','completeReg',
+    'totBal','refTitle','copyBtn','bal','logout','agentNums','subDep','selMethod','txId','senderMob',
+    'amount','depNote','subDepBtn','totalComm','chainBreak','commChart','commNote',
+    'availBal','minWd','wdReq','wdAmt','acctNum','secPin','wdNote','wdBtn','wdHist',
+    'depTab','commTab','wdTab','treeNote','admLogout','t-admLogout'];
+  ids.forEach(id=>{let el=document.getElementById('t-'+id);if(el)el.innerHTML=t(id);});
+  // tabs
+  ['profile','deposit','comm','wd','hist','tree'].forEach(k=>{
+    let el=document.getElementById('tt-'+k);if(el)el.innerHTML=t('tt_'+k);
+  });
+  ['users','deps','wds','agnts','comm','sets'].forEach(k=>{
+    let el=document.getElementById('att-'+k);if(el)el.innerHTML=t('att_'+k);
+  });
+  // placeholders
+  const phs={li:'loginPh',lp:'passPh',fpph:'mobilePh',rn:'namePh',rph:'mobilePh',rrf:'refPh',rpw:'minSixPh',rcp:'reenterPh',wamt:'minWdPh',wnum:'mobilePh',wpin:'yourPwPh'};
+  const phT={en:{mobilePh:'01XXXXXXXXX',namePh:'Your full name',refPh:'Leave empty if none',minSixPh:'Min 6 characters',reenterPh:'Re-enter password',minWdPh:'Min ৳1,000',yourPwPh:'Your login password'},
+             bn:{mobilePh:'01XXXXXXXXX',namePh:'আপনার পুরো নাম',refPh:'না থাকলে খালি রাখুন',minSixPh:'কমপক্ষে ৬ অক্ষর',reenterPh:'পুনরায় লিখুন',minWdPh:'সর্বনিম্ন ৳১,০০০',yourPwPh:'আপনার লগইন পাসওয়ার্ড'}};
+  Object.entries(phs).forEach(([id,ph])=>{let el=document.getElementById(id);if(el)el.placeholder=phT[L][ph]||phT.en[ph]||'';});
+  // re-render if logged in
+  if(D.cu){if(D.cu.level===0){radmhdr();radm();}else{rprof();}}
+}
+
+const DEP=5000,MXR=4,MIN_WD=1000;
+let CR=[0.25,0.60,0.015,0.015];
+const LBL={0:"Admin",1:"A",2:"B",3:"C",4:"D",5:"E",6:"F",7:"G"};
+const COL={0:"#F59E0B",1:"#6366F1",2:"#10B981",3:"#3B82F6",4:"#EC4899",5:"#8B5CF6",6:"#F97316",7:"#06B6D4"};
+const ico={bkash:'💗',nagad:'🟠',rocket:'🚀'};
+let _id=20;const nid=()=>++_id;
+
+function gc(name,id){
+  let c=(name||'USER').replace(/[^a-zA-Z]/g,'').toUpperCase()||'USER';
+  return c.slice(0,4).padEnd(4,'X')+String(id).padStart(3,'0');
+}
+function mk(id,nm,lv,pid,ph,ni,pw,ch=[]){
+  return{id,name:nm,level:lv,deposit:lv===0?0:DEP,parentId:pid,
+    referralCode:gc(nm,id),phone:ph||'',nid:ni||'',password:pw||'',
+    avatar:null,balance:0,children:ch};
+}
+
+let D={
+  tree:mk(1,'ADMIN',0,null,'01700000000','0000000000000','admin123',[
+    mk(2,'MEMBER A',1,1,'01711111111','1234567890123','pass123',[
+      mk(3,'MEMBER B1',2,2,'01722222222','2345678901234','pass123',[
+        mk(10,'MEMBER C1',3,3,'01744444444','4567890123456','pass123',[])
+      ]),
+      mk(4,'MEMBER B2',2,2,'01733333333','3456789012345','pass123',[])
+    ])
+  ]),
+  ag:{bkash:{name:'bKash',number:'01700000001'},nagad:{name:'Nagad',number:'01700000002'},rocket:{name:'Rocket',number:'01700000003'}},
+  txs:[],wds:[],ctxs:[],
+  cu:null,dm:'bkash',wm:'bkash',fpU:null,tsel:null,hm:'d'
+};
+
+const flat=(n,a=[])=>{a.push(n);n.children.forEach(c=>flat(c,a));return a;};
+function find(id,n=D.tree){if(n.id===id)return n;for(let c of n.children){let r=find(id,c);if(r)return r;}return null;}
+const allN=()=>flat(D.tree);
+const mems=()=>allN().filter(n=>n.level>0);
+function upd(id,fn){
+  const go=n=>n.id===id?fn({...n}):{...n,children:n.children.map(go)};
+  D.tree=go(D.tree);
+  if(D.cu&&D.cu.id===id)D.cu=find(id)||D.cu;
+}
+function addN(pid,nn){
+  const go=n=>n.id===pid?{...n,children:[...n.children,nn]}:{...n,children:n.children.map(go)};
+  D.tree=go(D.tree);
+}
+function upl(mid){
+  let up=[],all=allN(),cur=all.find(n=>n.id===mid);
+  while(cur&&up.length<4){let p=all.find(n=>n.id===cur.parentId);if(!p)break;up.push(p);cur=p;}
+  return up;
+}
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.style.display='none';s.classList.remove('active');});
+  let el=document.getElementById(id);
+  if(el){el.style.display='block';el.classList.add('active');window.scrollTo(0,0);}
+}
+function fmsg(id,txt,tp){
+  let el=document.getElementById(id);if(!el)return;
+  if(!txt){el.style.display='none';return;}
+  el.className='fm '+tp;el.style.display='block';el.innerHTML=txt;
+  if(tp!=='pin')setTimeout(()=>{if(el){el.style.display='none';}},3500);
+}
+function tp(id,btn){let i=document.getElementById(id);if(i.type==='password'){i.type='text';btn.textContent='🙈';}else{i.type='password';btn.textContent='👁️';}}
+function afl(txt,tp){
+  let el=document.getElementById('afl');
+  el.innerHTML=`<div class="fm ${tp}" style="display:block;margin-bottom:11px">${txt}</div>`;
+  setTimeout(()=>{el.innerHTML='';},3000);
+}
+function adfl(txt,tp){
+  let el=document.getElementById('adfl');
+  el.innerHTML=`<div class="fm ${tp}" style="display:block;margin-bottom:9px">${txt}</div>`;
+  setTimeout(()=>{el.innerHTML='';},3500);
+}
+function avh(node,sz=40){
+  let c=COL[Math.min(node.level,7)];
+  if(node.avatar)return`<div class="av" style="width:${sz}px;height:${sz}px;background:transparent;border:2px solid ${c}55"><img src="${node.avatar}"/></div>`;
+  return`<div class="av" style="width:${sz}px;height:${sz}px;background:linear-gradient(135deg,${c},${c}99);border:2px solid ${c}55;font-size:${Math.round(sz*.38)}px">${(node.name||'?')[0]}</div>`;
+}
+function atab(id,btn){
+  document.querySelectorAll('#s-app .tc').forEach(x=>x.classList.remove('on'));
+  document.getElementById('tc-'+id).classList.add('on');
+  document.querySelectorAll('#atabs .tab').forEach(b=>{b.classList.remove('on');b.style.background='rgba(255,255,255,.05)';b.style.color='#475569';});
+  btn.classList.add('on');btn.style.background='linear-gradient(135deg,#6366F1,#8B5CF6)';btn.style.color='#fff';
+  if(id==='comm')rcomm();
+  if(id==='hist')htab(D.hm,document.getElementById('hbt-'+D.hm));
+  if(id==='tree')rtree();
+  if(id==='withdraw'){let u=find(D.cu.id);document.getElementById('wbal').textContent='৳'+(u?.balance||0).toLocaleString();}
+}
+function admtab(id,btn){
+  document.querySelectorAll('#s-admin .tc').forEach(x=>x.classList.remove('on'));
+  document.getElementById('atc-'+id).classList.add('on');
+  document.querySelectorAll('#s-admin .tab').forEach(b=>{b.classList.remove('on');b.style.background='rgba(255,255,255,.05)';b.style.color='#475569';});
+  btn.classList.add('on');btn.style.background='linear-gradient(135deg,#F59E0B,#D97706)';btn.style.color='#fff';
+  if(id==='users')radm();if(id==='deps')rdeps();if(id==='wds')rwds();
+  if(id==='agnts')ragnts();if(id==='comm')radmcomm();if(id==='sets')rsets();
+}
+function smth(m,btn,type){
+  if(type==='dep'){D.dm=m;document.querySelectorAll('#tc-deposit .mb').forEach(b=>b.classList.remove('on'));}
+  else{D.wm=m;document.querySelectorAll('#tc-withdraw .mb').forEach(b=>b.classList.remove('on'));}
+  btn.classList.add('on');
+}
+function wdCard(w){
+  let st=w.status;
+  return`<div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:7px;border:1px solid ${st==='success'?'rgba(16,185,129,.15)':st==='rejected'?'rgba(239,68,68,.15)':'rgba(245,158,11,.15)'}">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;align-items:center;gap:6px"><span style="font-size:15px">${ico[w.method]||'💳'}</span>
+      <div><div style="font-size:11px;font-weight:700;color:#E2E8F0">${D.ag[w.method]?.name} — ${w.phone}</div><div style="font-size:9px;color:#475569">${w.date}</div></div></div>
+      <div style="text-align:right"><div style="font-size:12px;font-weight:700;color:#F59E0B">৳${w.amount.toLocaleString()}</div>
+      <span class="bdg ${st==='success'?'b-ok':st==='rejected'?'b-rj':'b-pn'}">${t(st==='success'?'success':st==='rejected'?'rejected':'pending')}</span></div>
+    </div>
+    ${st==='success'?`<div style="font-size:10px;color:#34D399;margin-top:5px;font-weight:700">🔔 Your withdrawal of ৳${w.amount.toLocaleString()} TK is successful!</div>`:''}
+  </div>`;
+}
+function doLogin(){
+  let id=document.getElementById('li').value.trim(),pw=document.getElementById('lp').value.trim();
+  if(!id||!pw){fmsg('lm',L==='bn'?'❌ সব তথ্য দিন':'❌ Fill all fields','er');return;}
+  let f=allN().find(n=>(n.referralCode===id.toUpperCase()||n.phone===id||n.name.toUpperCase()===id.toUpperCase())&&n.password===pw);
+  if(!f){fmsg('lm',L==='bn'?'❌ তথ্য সঠিক নয়':'❌ Invalid credentials','er');return;}
+  D.cu=f;document.getElementById('li').value='';document.getElementById('lp').value='';
+  if(f.level===0){show('s-admin');radm();radmhdr();}else{show('s-app');rprof();}
+}
+function logout(){D.cu=null;show('s-login');}
+function fpv(){
+  let ph=document.getElementById('fpph').value.trim(),ni=document.getElementById('fpni').value.trim();
+  let f=allN().find(n=>n.phone===ph&&n.nid===ni);
+  if(!f){fmsg('fpm',L==='bn'?'❌ মোবাইল বা NID মিলছে না':'❌ Mobile or NID not found','er');return;}
+  D.fpU=f;document.getElementById('fps1').style.display='none';document.getElementById('fps2').style.display='block';
+  document.getElementById('fpuc').innerHTML=`✅ ${f.name} — 📱 ${f.phone}`;
+}
+function fpr(){
+  let np=document.getElementById('fpnp').value.trim(),cp=document.getElementById('fpcp').value.trim();
+  if(!np||np.length<6){fmsg('fpm',L==='bn'?'❌ কমপক্ষে ৬ অক্ষর':'❌ Minimum 6 characters','er');return;}
+  if(np!==cp){fmsg('fpm',L==='bn'?'❌ পাসওয়ার্ড মিলছে না':'❌ Passwords do not match','er');return;}
+  upd(D.fpU.id,n=>({...n,password:np}));
+  fmsg('fpm',L==='bn'?'✅ পাসওয়ার্ড পরিবর্তন সফল!':'✅ Password changed!','ok');
+  setTimeout(()=>{document.getElementById('fps1').style.display='block';document.getElementById('fps2').style.display='none';D.fpU=null;show('s-login');},1800);
+}
+function chkrf(){
+  let v=document.getElementById('rrf').value.trim().toUpperCase();
+  document.getElementById('rrf').value=v;
+  let b=document.getElementById('rbanner');
+  if(!v){b.style.cssText='background:rgba(245,158,11,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(245,158,11,.2);font-size:11px;color:#FCD34D';
+    b.innerHTML=`<span id="t-noRefBanner">${t('noRefBanner')}</span>`;return;}
+  let f=allN().find(n=>n.referralCode===v);
+  if(f){
+    let cnt=f.children.length;
+    if(cnt>=MXR){b.style.cssText='background:rgba(239,68,68,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(239,68,68,.2);font-size:11px;color:#F87171';
+      b.innerHTML=`❌ ${f.name} — Slots full (${MXR}/${MXR})`;}
+    else{b.style.cssText='background:rgba(16,185,129,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(16,185,129,.2);font-size:11px;color:#34D399';
+      b.innerHTML=`✅ Referrer: <b>${f.name}</b> → Level ${f.level+1} (${cnt}/${MXR} used)`;}
+  }else{b.style.cssText='background:rgba(239,68,68,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(239,68,68,.2);font-size:11px;color:#F87171';
+    b.innerHTML=L==='bn'?'❌ রেফার কোড সঠিক নয়':'❌ Invalid referral code';}
+}
+function doReg(){
+  let n=document.getElementById('rn').value.trim(),ph=document.getElementById('rph').value.trim();
+  let ni=document.getElementById('rni').value.trim(),rf=document.getElementById('rrf').value.trim().toUpperCase();
+  let pw=document.getElementById('rpw').value.trim(),cp=document.getElementById('rcp').value.trim();
+  const E=L==='bn';
+  if(!n||!ph||!ni||!pw){fmsg('rm',E?'❌ সব তথ্য পূরণ করুন':'❌ Fill all required fields','er');return;}
+  if(ph.length<11){fmsg('rm',E?'❌ সঠিক মোবাইল নম্বর দিন':'❌ Enter valid mobile number','er');return;}
+  if(ni.length<10){fmsg('rm',E?'❌ সঠিক NID দিন':'❌ Enter valid NID','er');return;}
+  if(pw.length<6){fmsg('rm',E?'❌ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর':'❌ Password min 6 characters','er');return;}
+  if(pw!==cp){fmsg('rm',E?'❌ পাসওয়ার্ড মিলছে না':'❌ Passwords do not match','er');return;}
+  let all=allN();
+  if(all.find(x=>x.phone===ph)){fmsg('rm',E?'❌ এই মোবাইলে অ্যাকাউন্ট আছে':'❌ Mobile already registered','er');return;}
+  if(all.find(x=>x.nid===ni)){fmsg('rm',E?'❌ এই NID তে অ্যাকাউন্ট আছে':'❌ NID already registered','er');return;}
+  // Without referral → goes under admin (id=1)
+  let par=all.find(x=>x.id===1);
+  if(rf){
+    let f=all.find(x=>x.referralCode===rf);
+    if(!f){fmsg('rm',E?'❌ রেফার কোড সঠিক নয়':'❌ Invalid referral code','er');return;}
+    if(f.level>=7){fmsg('rm',E?'❌ সর্বোচ্চ লেভেল অতিক্রম':'❌ Max level exceeded','er');return;}
+    if(f.children.length>=MXR){fmsg('rm',E?`❌ এই সদস্যের স্লট পূর্ণ`:`❌ This member's slots are full (max ${MXR})`,'er');return;}
+    par=f;
+  }
+  let id=nid(),nm=mk(id,n,par.level+1,par.id,ph,ni,pw,[]);
+  addN(par.id,nm);D.cu=find(id);show('s-app');rprof();
+}
+function upav(e){
+  let file=e.target.files[0];if(!file)return;
+  let r=new FileReader();
+  r.onload=ev=>{upd(D.cu.id,n=>({...n,avatar:ev.target.result}));D.cu=find(D.cu.id);rprof();afl(L==='bn'?'✅ ছবি আপলোড হয়েছে!':'✅ Photo uploaded!','ok');};
+  r.readAsDataURL(file);
+}
+function rprof(){
+  let u=find(D.cu.id)||D.cu;D.cu=u;
+  let c=COL[Math.min(u.level,7)],bal=u.balance||0;
+  let ha=document.getElementById('hav');
+  ha.style.background=u.avatar?'transparent':`linear-gradient(135deg,${c},${c}99)`;
+  ha.innerHTML=u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:u.name[0];
+  document.getElementById('hnm').textContent=u.name;
+  document.getElementById('hcd').textContent=u.referralCode+' • Lv'+u.level;
+  document.getElementById('hbl').textContent='৳'+bal.toLocaleString();
+  let pa=document.getElementById('pav');
+  pa.style.background=u.avatar?'transparent':`linear-gradient(135deg,${c},${c}99)`;
+  pa.innerHTML=u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:u.name[0];
+  document.getElementById('pnm').textContent=u.name;
+  document.getElementById('psb').textContent=`#${u.id} • ${t('level')} ${u.level} (${LBL[u.level]||u.level})`;
+  document.getElementById('pbdg').textContent=`🏅 ${LBL[u.level]||'Level '+u.level} ${t('rank')}`;
+  document.getElementById('rcd').textContent=u.referralCode;
+  document.getElementById('ref-slots').textContent=`${t('slotsUsed')}: ${u.children.length}/${MXR}`;
+  // Combined balance card
+  document.getElementById('t-totBal').innerHTML=t('totBal');
+  document.getElementById('p-bal').textContent='৳'+bal.toLocaleString();
+  document.getElementById('p-bsub').textContent=t('bal')+': ৳'+bal.toLocaleString();
+  // Stats (3 only — no separate commission card)
+  let ts=flat(u).length-1;
+  document.getElementById('psts').innerHTML=[
+    {l:t('teamSize'),v:ts,i:'🌐',c:'#FBBF24'},
+    {l:t('referrals')+` (${u.children.length}/${MXR})`,v:u.children.length,i:'👥',c:'#F472B6'},
+    {l:t('level'),v:LBL[u.level]||u.level,i:'🏅',c:'#A78BFA'},
+    {l:t('bal'),v:'৳'+bal.toLocaleString(),i:'💰',c:'#10B981'},
+  ].map(s=>`<div class="stat"><div style="font-size:15px;margin-bottom:3px">${s.i}</div><div class="sv" style="color:${s.c}">${s.v}</div><div class="sl">${s.l}</div></div>`).join('');
+  document.getElementById('pinf').innerHTML=[
+    {i:'📱',l:t('mobile'),v:u.phone||'—'},{i:'🪪',l:'NID',v:u.nid?u.nid.slice(0,4)+'●●●'+u.nid.slice(-2):'—'},
+    {i:'🆔',l:t('id'),v:'#'+u.id},{i:'📊',l:t('level'),v:u.level+' ('+( LBL[u.level]||u.level)+')'},{i:'🔑',l:'Referral',v:u.referralCode},
+  ].map((r,i,a)=>`<div class="row" style="padding:8px 12px;${i===a.length-1?'border-bottom:none':''}"><span style="font-size:13px;margin-right:8px">${r.i}</span><span style="flex:1;font-size:11px;color:#64748B">${r.l}</span><span style="font-size:11px;color:#CBD5E1;font-weight:600;font-family:${r.l==='Referral'?'monospace':'inherit'}">${r.v}</span></div>`).join('');
+  ragacc();
+  document.getElementById('wbal').textContent='৳'+bal.toLocaleString();
+}
+function cprc(){
+  let code=document.getElementById('rcd').textContent;
+  if(navigator.clipboard)navigator.clipboard.writeText(code).then(()=>afl(L==='bn'?'✅ কোড কপি হয়েছে!':'✅ Code copied!','ok'));
+  else afl('Code: '+code,'ok');
+}
+function ragacc(){
+  const cl={bkash:'#E2136E',nagad:'#F26522',rocket:'#8B5CF6'};
+  let el=document.getElementById('agacc');if(!el)return;
+  el.innerHTML=Object.entries(D.ag).map(([k,ag])=>`
+    <div class="acd" id="acd-${k}" onclick="togag('${k}')">
+      <div class="ahdr">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="width:34px;height:34px;border-radius:8px;background:${cl[k]}22;border:1.5px solid ${cl[k]}44;display:flex;align-items:center;justify-content:center;font-size:17px">${ico[k]}</div>
+          <div><div style="font-size:12px;font-weight:700;color:#E2E8F0">${ag.name}</div><div style="font-size:9px;color:#64748B">${L==='bn'?'ক্লিক করুন নম্বর দেখতে':'Tap to reveal number'}</div></div>
+        </div><span id="aar-${k}" style="font-size:15px;color:#374151">⌄</span>
+      </div>
+      <div class="abdy" id="ab-${k}">
+        <div style="font-size:10px;color:#64748B;margin-bottom:6px">${ag.name} agent number:</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:${cl[k]}12;border-radius:8px;padding:10px 12px;border:1px solid ${cl[k]}33">
+          <span style="font-size:17px;font-weight:700;color:${cl[k]};letter-spacing:2px;font-family:monospace">${ag.number}</span>
+          <button onclick="event.stopPropagation();cpn('${ag.number}')" style="background:${cl[k]}25;border:1px solid ${cl[k]}55;color:${cl[k]};border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">${t('copyBtn')}</button>
+        </div>
+        <div style="font-size:9px;color:#475569;margin-top:6px">⚠️ ${L==='bn'?'এই নম্বরে টাকা পাঠিয়ে TX আইডি সাবমিট করুন':'Send money here then submit TX ID below'}</div>
+      </div>
+    </div>`).join('');
+}
+function togag(k){
+  const cl={bkash:'#E2136E',nagad:'#F26522',rocket:'#8B5CF6'};
+  let op=document.getElementById('ab-'+k).style.display==='block';
+  ['bkash','nagad','rocket'].forEach(key=>{
+    let b=document.getElementById('ab-'+key),a=document.getElementById('aar-'+key),c=document.getElementById('acd-'+key);
+    if(b)b.style.display='none';if(a){a.style.transform='';a.style.color='#374151';}if(c)c.style.borderColor='rgba(255,255,255,.07)';
+  });
+  if(!op){document.getElementById('ab-'+k).style.display='block';document.getElementById('aar-'+k).style.transform='rotate(180deg)';document.getElementById('aar-'+k).style.color=cl[k];document.getElementById('acd-'+k).style.borderColor=cl[k]+'55';}
+}
+function cpn(num){if(navigator.clipboard)navigator.clipboard.writeText(num).then(()=>afl(L==='bn'?'✅ নম্বর কপি!':'✅ Copied!','ok'));else afl('Number: '+num,'ok');}
+
+function subdep(){
+  let tx=document.getElementById('dtx').value.trim(),ph=document.getElementById('dph').value.trim();
+  let amt=parseFloat(document.getElementById('damt').value)||0;
+  if(!tx){fmsg('dm',L==='bn'?'❌ TX আইডি দিন':'❌ Enter TX ID','er');return;}
+  if(!ph||ph.length<11){fmsg('dm',L==='bn'?'❌ মোবাইল নম্বর দিন':'❌ Enter mobile number','er');return;}
+  if(D.txs.find(x=>x.txId===tx)){fmsg('dm',L==='bn'?'❌ TX আইডি আগেই ব্যবহৃত':'❌ TX ID already used','er');return;}
+  D.txs.push({id:nid(),txId:tx,memberId:D.cu.id,memberName:D.cu.name,method:D.dm,senderPhone:ph,amount:amt,date:new Date().toLocaleDateString(),status:'pending'});
+  fmsg('dm',L==='bn'?'✅ সাবমিট হয়েছে! অ্যাডমিন ভেরিফাই করলে কমিশন বিতরণ হবে।':'✅ Submitted! Commission distributed after admin verification.','ok');
+  document.getElementById('dtx').value='';document.getElementById('dph').value='';document.getElementById('damt').value='5000';
+}
+
+function subwd(){
+  let u=find(D.cu.id);
+  let amt=parseFloat(document.getElementById('wamt').value)||0;
+  let num=document.getElementById('wnum').value.trim();
+  let pin=document.getElementById('wpin').value.trim();
+  const E=L==='bn';
+  if(amt<MIN_WD){fmsg('wm',E?`❌ সর্বনিম্ন উত্তোলন ৳${MIN_WD.toLocaleString()}`:`❌ Min withdrawal ৳${MIN_WD.toLocaleString()}`,'er');return;}
+  if(amt>(u.balance||0)){fmsg('wm',E?'❌ পর্যাপ্ত ব্যালেন্স নেই':'❌ Insufficient balance','er');return;}
+  if(!num||num.length<11){fmsg('wm',E?'❌ মোবাইল নম্বর দিন':'❌ Enter mobile number','er');return;}
+  if(!pin){fmsg('wm',E?'❌ পাসওয়ার্ড দিন':'❌ Enter password','er');return;}
+  if(pin!==u.password){fmsg('wm',E?'❌ পাসওয়ার্ড সঠিক নয়':'❌ Incorrect password','er');return;}
+  upd(D.cu.id,n=>({...n,balance:(n.balance||0)-amt}));
+  D.cu=find(D.cu.id);
+  D.wds.push({id:nid(),memberId:D.cu.id,memberName:D.cu.name,method:D.wm,phone:num,amount:amt,date:new Date().toLocaleDateString(),status:'pending'});
+  let nb=find(D.cu.id)?.balance||0;
+  ['wbal','hbl'].forEach(id=>{let el=document.getElementById(id);if(el)el.textContent='৳'+nb.toLocaleString();});
+  document.getElementById('p-bal').textContent='৳'+nb.toLocaleString();
+  fmsg('wm',E?'✅ রিকোয়েস্ট সাবমিট! অ্যাডমিন পেমেন্ট করলে নোটিফিকেশন পাবেন।':'✅ Request submitted! You will be notified when admin processes payment.','ok');
+  document.getElementById('wamt').value='';document.getElementById('wnum').value='';document.getElementById('wpin').value='';
+  rwdhist();radmhdr();
+}
+
+function rcomm(){
+  let u=find(D.cu.id),bal=u.balance||0,ts=flat(u).length-1;
+  document.getElementById('ctot').textContent='৳'+bal.toLocaleString();
+  document.getElementById('ctm').textContent=ts+' '+(L==='bn'?'সদস্যের নেটওয়ার্কে':'members in network');
+  const cls=["#10B981","#3B82F6","#EC4899","#8B5CF6"];
+  const clbls=L==='bn'?["১ম লেভেল (B)","২য় লেভেল (C)","৩য় লেভেল (D)","৪র্থ লেভেল (E)"]:["Level 1 (B)","Level 2 (C)","Level 3 (D)","Level 4 (E)"];
+  // calculate actual commission received per level
+  let br=[0,0,0,0];
+  D.ctxs.filter(x=>x.upId===u.id).forEach(x=>{if(x.depth>=1&&x.depth<=4)br[x.depth-1]+=x.amount;});
+  document.getElementById('cbrk').innerHTML=clbls.map((lbl,i)=>`
+    <div style="display:flex;align-items:center;padding:10px 12px;border-bottom:${i<3?'1px solid rgba(255,255,255,.04)':'none'}">
+      <div style="width:22px;height:22px;border-radius:6px;background:${cls[i]}22;border:1px solid ${cls[i]}44;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${cls[i]};margin-right:8px">${i+1}</div>
+      <div style="flex:1"><div style="font-size:11px;color:#CBD5E1;font-weight:700">${lbl}</div><div style="font-size:9px;color:#475569">${(CR[i]*100).toFixed(1)}% per member = ৳${(DEP*CR[i]).toLocaleString()}</div></div>
+      <div style="color:${cls[i]};font-weight:700;font-size:12px">৳${br[i].toLocaleString()}</div>
+    </div>`).join('');
+  const counts=[4,16,64,256];
+  document.getElementById('cchart').innerHTML=`
+    <div style="display:grid;grid-template-columns:1.3fr .7fr .5fr .8fr;gap:3px 6px;font-size:9px;margin-bottom:6px;color:#475569;font-weight:700">
+      <div>${L==='bn'?'লেভেল':'Level'}</div><div>${L==='bn'?'সদস্য':'Members'}</div><div>%</div><div>${L==='bn'?'মোট':'Total'}</div></div>`+
+    counts.map((cnt,i)=>`<div style="display:grid;grid-template-columns:1.3fr .7fr .5fr .8fr;gap:3px 6px;font-size:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+      <div style="color:${cls[i]};font-weight:700">${['B','C','D','E'][i]}</div>
+      <div style="color:#94A3B8">${cnt}</div>
+      <div style="color:${cls[i]};font-weight:700">${(CR[i]*100).toFixed(1)}%</div>
+      <div style="color:${cls[i]};font-weight:700">৳${(cnt*DEP*CR[i]).toLocaleString()}</div>
+    </div>`).join('')+
+    `<div style="display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid rgba(255,255,255,.1);margin-top:4px">
+      <span style="font-size:11px;color:#FCD34D;font-weight:700">${L==='bn'?'সর্বমোট (৩৪০ জন)':'Total (340 members)'}</span>
+      <span style="font-size:11px;color:#FCD34D;font-weight:700">৳${[4,16,64,256].reduce((s,c,i)=>s+c*DEP*CR[i],0).toLocaleString()}</span></div>`;
+}
+
+function htab(mode,btn){
+  D.hm=mode;
+  ['d','c','w'].forEach(m=>{let b=document.getElementById('hbt-'+m);if(b){b.style.background='rgba(255,255,255,.05)';b.style.color='#475569';}});
+  if(btn){btn.style.background='linear-gradient(135deg,#6366F1,#8B5CF6)';btn.style.color='#fff';}
+  let el=document.getElementById('hlist');
+  if(mode==='d'){
+    let ut=D.txs.filter(x=>x.memberId===D.cu.id);
+    if(!ut.length){el.innerHTML=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noDeposit')}</div>`;return;}
+    el.innerHTML=ut.slice().reverse().map(tx=>`
+      <div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:7px;border:1px solid ${tx.status==='confirmed'?'rgba(16,185,129,.15)':tx.status==='rejected'?'rgba(239,68,68,.15)':'rgba(245,158,11,.15)'}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <div style="display:flex;align-items:center;gap:6px"><span style="font-size:15px">${ico[tx.method]||'💳'}</span><div><div style="font-size:11px;font-weight:700;color:#E2E8F0">${D.ag[tx.method]?.name}</div><div style="font-size:9px;color:#475569">${tx.date}</div></div></div>
+          <div style="text-align:right"><div style="font-size:12px;font-weight:700;color:#10B981">৳${tx.amount.toLocaleString()}</div><span class="bdg ${tx.status==='confirmed'?'b-ok':tx.status==='rejected'?'b-rj':'b-pn'}">${t(tx.status==='confirmed'?'confirmed':tx.status==='rejected'?'rejected':'pending')}</span></div>
+        </div><div style="font-size:9px;color:#374151">TX: <span style="color:#A78BFA">${tx.txId}</span> • 📱 ${tx.senderPhone}</div>
+      </div>`).join('');
+  }else if(mode==='c'){
+    let ct=D.ctxs.filter(x=>x.upId===D.cu.id);
+    if(!ct.length){el.innerHTML=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noComm')}</div>`;return;}
+    el.innerHTML=ct.slice().reverse().map(x=>`
+      <div style="background:rgba(16,185,129,.04);border-radius:10px;padding:10px 12px;margin-bottom:7px;border:1px solid rgba(16,185,129,.12)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:11px;font-weight:700;color:#E2E8F0">💰 Commission</div><div style="font-size:9px;color:#475569">${L==='bn'?'থেকে':'from'}: ${x.from} • Lv${x.depth} • ${x.date}</div></div>
+          <div style="font-size:13px;font-weight:700;color:#10B981">+৳${x.amount.toLocaleString()}</div>
+        </div>
+      </div>`).join('');
+  }else{
+    let uw=D.wds.filter(x=>x.memberId===D.cu.id);
+    if(!uw.length){el.innerHTML=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noWd')}</div>`;return;}
+    el.innerHTML=uw.slice().reverse().map(w=>wdCard(w)).join('');
+  }
+}
+function rwdhist(){
+  let el=document.getElementById('wdhist');if(!el)return;
+  let uw=D.wds.filter(x=>x.memberId===D.cu.id);
+  if(!uw.length){el.innerHTML=`<div style="text-align:center;color:#374151;font-size:12px;padding:18px 0">${t('noWd')}</div>`;return;}
+  el.innerHTML=uw.slice().reverse().map(w=>wdCard(w)).join('');
+}
+function rtree(){
+  let el=document.getElementById('tw');el.innerHTML='';
+  let u=find(D.cu.id);if(!u)return;
+  D.tsel=null;
+  document.getElementById('tsel').style.display='none';
+  el.appendChild(btree(u,true));
+  document.getElementById('tleg').innerHTML=Object.entries(LBL).slice(0,6).map(([lv,lb])=>`<div style="display:flex;align-items:center;gap:3px"><div style="width:7px;height:7px;border-radius:2px;background:${COL[parseInt(lv)]}"></div><span style="font-size:9px;color:#374151">Lv${lv}:${lb}</span></div>`).join('');
+  document.getElementById('t-treeNote').textContent=t('treeNote');
+}
+function btree(node,isRoot=false){
+  let c=COL[Math.min(node.level,7)],sel=D.tsel&&D.tsel.id===node.id,isMe=node.id===D.cu.id;
+  let w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;align-items:center';
+  let box=document.createElement('div');
+  box.style.cssText=`background:${sel?`linear-gradient(135deg,${c},${c}bb)`:isMe?`rgba(${c.slice(1).match(/../g).map(x=>parseInt(x,16)).join(',')},0.2)`:'rgba(255,255,255,.04)'};border:2px solid ${sel?c:isMe?c:c+'44'};border-radius:8px;padding:5px 9px;min-width:68px;text-align:center;cursor:${isMe?'default':'pointer'};user-select:none;box-shadow:${sel||isMe?`0 0 10px ${c}44`:''}`;
+  box.innerHTML=`<div style="color:${sel||isMe?'#fff':c};font-size:9px;font-weight:700">${node.name}</div><div style="color:rgba(255,255,255,.3);font-size:7px;margin-top:1px">${isMe?'★ YOU':'#'+node.id+' Lv'+node.level}</div><div style="color:rgba(255,255,255,.25);font-size:7px">${node.children.length}/${MXR}</div>`;
+  if(!isMe)box.onclick=function(){D.tsel=(D.tsel&&D.tsel.id===node.id)?null:node;rtree();utsi();};
+  w.appendChild(box);
+  if(node.children.length>0){
+    let ln=document.createElement('div');ln.style.cssText=`width:2px;height:11px;background:${c}33`;w.appendChild(ln);
+    let row=document.createElement('div');row.style.cssText='display:flex;align-items:flex-start';
+    node.children.forEach(ch=>{
+      let cw=document.createElement('div');cw.style.cssText='display:flex;flex-direction:column;align-items:center;padding:0 3px';
+      let l=document.createElement('div');l.style.cssText=`width:2px;height:11px;background:${COL[Math.min(ch.level,7)]}33`;
+      cw.appendChild(l);cw.appendChild(btree(ch));row.appendChild(cw);
+    });
+    w.appendChild(row);
+  }
+  return w;
+}
+function utsi(){
+  let el=document.getElementById('tsel');
+  if(!D.tsel){el.style.display='none';return;}
+  let n=D.tsel,bal=n.balance||0;
+  el.style.display='block';
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-weight:700;color:#A78BFA;font-size:12px">${n.name}</div>
+      <div style="font-size:9px;color:#374151;font-family:monospace">${n.referralCode} • Lv${n.level} • ${n.children.length}/${MXR}</div>
+      <div style="font-size:9px;color:#374151">📱 ${n.phone}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="color:#10B981;font-weight:700;font-size:12px">৳${bal.toLocaleString()}</div>
+      <div style="font-size:8px;color:#374151">${t('bal')}</div>
+    </div>
+  </div>`;
+}
+function radmhdr(){
+  let an=find(1),bal=an?.balance||0;
+  let totConfirmed=D.txs.filter(x=>x.status==='confirmed').reduce((s,x)=>s+x.amount,0);
+  let adminRate=1-CR.reduce((s,r)=>s+r,0);
+  document.getElementById('adbl').textContent=`${t('adminBalance')}: ৳${bal.toLocaleString()} | ${(adminRate*100).toFixed(1)}% = ৳${Math.round(totConfirmed*adminRate).toLocaleString()}`;
+  let pnd=D.txs.filter(x=>x.status==='pending').length+D.wds.filter(x=>x.status==='pending').length;
+  let b=document.getElementById('pndb');
+  pnd>0?(b.style.display='block',b.textContent='⏳ '+pnd):(b.style.display='none');
+}
+function radm(){
+  let edit=document.getElementById('aedit'),lst=document.getElementById('alist');
+  edit.style.display='none';lst.style.display='block';
+  let ms=mems();
+  lst.innerHTML=`<div class="g2">
+    <div class="stat"><div class="sv" style="color:#6366F1">${ms.length}</div><div class="sl">${t('totalMembers')}</div></div>
+    <div class="stat"><div class="sv" style="color:#10B981">৳${(ms.reduce((s,m)=>s+(m.deposit||0),0)/1000).toFixed(0)}k</div><div class="sl">${t('totalDeposits')}</div></div>
+  </div>
+  <div style="background:rgba(255,255,255,.02);border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.05)">
+  ${ms.map(m=>{let c=COL[Math.min(m.level,7)];return`<div class="mr">
+    ${avh(m,32)}
+    <div style="flex:1;min-width:0;margin-left:8px">
+      <div style="font-size:11px;font-weight:700;color:#E2E8F0">${m.name}</div>
+      <div style="font-size:9px;color:#374151;font-family:monospace">${m.referralCode} • <span style="color:${c}">Lv${m.level}</span> • ${m.children.length}/${MXR}</div>
+    </div>
+    <div style="text-align:right;margin-right:6px"><div style="color:#10B981;font-size:10px;font-weight:700">৳${(m.balance||0).toLocaleString()}</div><div style="font-size:8px;color:#374151">${t('bal')}</div></div>
+    <button onclick="oedit(${m.id})" style="background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#A78BFA;border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer">✏️</button>
+  </div>`;}).join('')}</div>`;
+}
+function oedit(id){
+  let m=find(id);
+  document.getElementById('aedit').style.display='block';document.getElementById('alist').style.display='none';
+  let c=COL[Math.min(m.level,7)];
+  document.getElementById('aedit').innerHTML=`
+    <button class="bk" onclick="cedit()">← ${t('back')}</button>
+    <div style="display:flex;justify-content:center;margin-bottom:14px"><div style="position:relative">
+      ${m.avatar?`<div class="av" style="width:64px;height:64px;background:transparent;border:3px solid ${c}55"><img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="av" style="width:64px;height:64px;background:linear-gradient(135deg,${c},${c}99);border:3px solid ${c}55;font-size:23px">${m.name[0]}</div>`}
+      <label style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:#6366F1;border:2px solid #080812;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer">📷<input type="file" accept="image/*" onchange="admav(event,${m.id})" style="display:none"/></label>
+    </div></div>
+    <div class="fm" id="aem"></div>
+    <div class="card">
+      <div class="sttl">${t('persInfo2')}</div>
+      <label>${t('fullName').replace(' *','')}</label><input id="ae-n" value="${m.name}"/>
+      <label>${t('mobile').replace(' *','')}</label><input id="ae-ph" type="tel" value="${m.phone}"/>
+      <label>NID</label><input id="ae-ni" value="${m.nid}"/>
+      <label>Referral Code (English only)</label><input id="ae-rc" value="${m.referralCode}" style="font-family:monospace;text-transform:uppercase" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"/>
+    </div>
+    <div class="card">
+      <div class="sttl">${t('finInfo')}</div>
+      <label>${t('bal')} (৳)</label><input id="ae-bl" type="number" value="${m.balance||0}"/>
+      <label>Deposit (৳)</label><input id="ae-dp" type="number" value="${m.deposit||0}"/>
+    </div>
+    <div class="card">
+      <div class="sttl">🔒 Password</div>
+      <label>${t('currPw')}</label>
+      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:9px;padding:10px 12px;font-size:15px;color:#FCD34D;font-weight:700;letter-spacing:2px;margin-bottom:10px;font-family:monospace">${m.password}</div>
+      <label>${t('newPwChange')}</label>
+      <div style="position:relative;margin-bottom:10px"><input id="ae-np" type="password" placeholder="Min 6 characters" style="margin-bottom:0;padding-right:42px"/><button onclick="tp('ae-np',this)" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#64748B;cursor:pointer">👁️</button></div>
+    </div>
+    <button class="btn btn-green" onclick="sedit(${m.id})">${t('saveChanges')}</button>`;
+}
+function cedit(){document.getElementById('aedit').style.display='none';document.getElementById('alist').style.display='block';radm();}
+function admav(e,id){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=ev=>{upd(id,n=>({...n,avatar:ev.target.result}));oedit(id);fmsg('aem',L==='bn'?'✅ ছবি আপলোড!':'✅ Photo uploaded!','ok');};r.readAsDataURL(f);}
+function sedit(id){
+  let n=document.getElementById('ae-n').value.trim(),ph=document.getElementById('ae-ph').value.trim();
+  let ni=document.getElementById('ae-ni').value.trim(),rc=document.getElementById('ae-rc').value.trim().toUpperCase();
+  let bl=parseFloat(document.getElementById('ae-bl').value)||0,dp=parseFloat(document.getElementById('ae-dp').value)||0;
+  let np=document.getElementById('ae-np').value.trim();
+  if(!n){fmsg('aem',L==='bn'?'❌ নাম দিন':'❌ Enter name','er');return;}
+  upd(id,m=>({...m,name:n,phone:ph,nid:ni,referralCode:rc||m.referralCode,balance:bl,deposit:dp,...(np.length>=6?{password:np}:{})}));
+  fmsg('aem',L==='bn'?'✅ তথ্য আপডেট!':'✅ Updated!','ok');setTimeout(()=>cedit(),1400);
+}
+function rdeps(){
+  radmhdr();
+  let pnd=D.txs.filter(x=>x.status==='pending'),all=D.txs;
+  let html='';
+  if(pnd.length){
+    html+=`<div style="font-size:12px;font-weight:700;color:#F87171;margin-bottom:8px">${t('pending')} (${pnd.length})</div>`;
+    html+=pnd.map(tx=>`<div style="background:rgba(239,68,68,.06);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid rgba(239,68,68,.15)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:12px;font-weight:700;color:#E2E8F0">${tx.memberName} ${ico[tx.method]||''}</div><div style="font-size:13px;font-weight:700;color:#10B981">৳${tx.amount.toLocaleString()}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;margin-bottom:8px">
+        <div><span style="color:#475569">Method: </span><span style="color:#FCD34D">${D.ag[tx.method]?.name}</span></div>
+        <div><span style="color:#475569">Date: </span><span style="color:#CBD5E1">${tx.date}</span></div>
+        <div><span style="color:#475569">TX: </span><span style="color:#A78BFA;font-weight:700">${tx.txId}</span></div>
+        <div><span style="color:#475569">Mobile: </span><span style="color:#CBD5E1">${tx.senderPhone}</span></div>
+      </div>
+      <button class="vbtn" onclick="doverify(${tx.id})">${t('verifyDist')}</button>
+      <button class="rbtn" onclick="dorej(${tx.id},'dep')">${t('cancelBtn')}</button>
+    </div>`).join('');
+  }
+  if(all.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:8px;margin-top:${pnd.length?'12px':'0'}">${t('allTx')} (${all.length})</div>`;
+    html+=all.slice().reverse().map(tx=>`<div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:6px;border:1px solid ${tx.status==='confirmed'?'rgba(16,185,129,.12)':tx.status==='rejected'?'rgba(239,68,68,.12)':'rgba(245,158,11,.12)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+        <div style="font-size:11px;font-weight:700;color:#E2E8F0">${tx.memberName} ${ico[tx.method]||''}</div>
+        <div style="display:flex;gap:6px;align-items:center"><span style="font-size:12px;font-weight:700;color:#10B981">৳${tx.amount.toLocaleString()}</span><span class="bdg ${tx.status==='confirmed'?'b-ok':tx.status==='rejected'?'b-rj':'b-pn'}">${t(tx.status==='confirmed'?'confirmed':tx.status==='rejected'?'rejected':'pending')}</span></div>
+      </div><div style="font-size:9px;color:#475569">TX: ${tx.txId} • ${tx.date}</div>
+    </div>`).join('');
+  }
+  if(!all.length)html=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noDeposit')}</div>`;
+  document.getElementById('adeps').innerHTML=html;
+}
+function doverify(txId){
+  let tx=D.txs.find(x=>x.id===txId);if(!tx||tx.status!=='pending')return;
+  tx.status='confirmed';
+  let adminRate=1-CR.reduce((s,r)=>s+r,0);
+  upl(tx.memberId).forEach((u,i)=>{
+    if(i>=CR.length)return;
+    let amt=Math.round(tx.amount*CR[i]*100)/100;
+    upd(u.id,n=>({...n,balance:(n.balance||0)+amt}));
+    D.ctxs.push({id:nid(),upId:u.id,from:tx.memberName,amount:amt,depth:i+1,date:tx.date});
+  });
+  upd(1,n=>({...n,balance:(n.balance||0)+Math.round(tx.amount*adminRate*100)/100}));
+  radmhdr();adfl(L==='bn'?'✅ ভেরিফাই সম্পন্ন! কমিশন বিতরণ হয়েছে।':'✅ Verified! Commission distributed.','ok');rdeps();
+}
+function dorej(id,type){
+  if(type==='dep'){let tx=D.txs.find(x=>x.id===id);if(tx)tx.status='rejected';rdeps();}
+  else{let wd=D.wds.find(x=>x.id===id);if(wd&&wd.status==='pending'){wd.status='rejected';upd(wd.memberId,n=>({...n,balance:(n.balance||0)+wd.amount}));}rwds();}
+  radmhdr();
+}
+function rwds(){
+  radmhdr();
+  let pnd=D.wds.filter(x=>x.status==='pending'),all=D.wds;
+  let html='';
+  if(pnd.length){
+    html+=`<div style="font-size:12px;font-weight:700;color:#F87171;margin-bottom:8px">${t('pending')} (${pnd.length})</div>`;
+    html+=pnd.map(w=>`<div style="background:rgba(245,158,11,.06);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid rgba(245,158,11,.2)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:12px;font-weight:700;color:#E2E8F0">${w.memberName} ${ico[w.method]||''}</div><div style="font-size:13px;font-weight:700;color:#F59E0B">৳${w.amount.toLocaleString()}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;margin-bottom:8px">
+        <div><span style="color:#475569">Method: </span><span style="color:#FCD34D">${D.ag[w.method]?.name}</span></div>
+        <div><span style="color:#475569">Date: </span><span style="color:#CBD5E1">${w.date}</span></div>
+        <div><span style="color:#475569">Account: </span><span style="color:#A78BFA;font-weight:700">${w.phone}</span></div>
+        <div><span style="color:#475569">Member ID: </span><span style="color:#CBD5E1">#${w.memberId}</span></div>
+      </div>
+      <button class="vbtn" onclick="dowdsuc(${w.id})">${t('paySuccess')}</button>
+      <button class="rbtn" onclick="dorej(${w.id},'wd')">${t('cancelBtn')}</button>
+    </div>`).join('');
+  }
+  if(all.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:8px;margin-top:${pnd.length?'12px':'0'}">${t('allWd')} (${all.length})</div>`;
+    html+=all.slice().reverse().map(w=>`<div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:6px;border:1px solid ${w.status==='success'?'rgba(16,185,129,.12)':w.status==='rejected'?'rgba(239,68,68,.12)':'rgba(245,158,11,.12)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+        <div style="font-size:11px;font-weight:700;color:#E2E8F0">${w.memberName} — ${w.phone}</div>
+        <div style="display:flex;gap:6px;align-items:center"><span style="font-size:12px;font-weight:700;color:#F59E0B">৳${w.amount.toLocaleString()}</span><span class="bdg ${w.status==='success'?'b-ok':w.status==='rejected'?'b-rj':'b-pn'}">${t(w.status==='success'?'success':w.status==='rejected'?'rejected':'pending')}</span></div>
+      </div><div style="font-size:9px;color:#475569">${D.ag[w.method]?.name} • ${w.date}</div>
+    </div>`).join('');
+  }
+  if(!all.length)html=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noWd')}</div>`;
+  document.getElementById('awds').innerHTML=html;
+}
+function dowdsuc(wdId){
+  let wd=D.wds.find(x=>x.id===wdId);if(!wd||wd.status!=='pending')return;
+  wd.status='success';radmhdr();
+  adfl(`🔔 ${wd.memberName}: ৳${wd.amount.toLocaleString()} — "Your withdrawal of ৳${wd.amount.toLocaleString()} TK is successful!"`,'ok');
+  rwds();
+}
+function ragnts(){
+  document.getElementById('aagnts').innerHTML=
+    `<div style="font-size:11px;color:#64748B;margin-bottom:12px">${L==='bn'?'কাস্টমাররা এই নম্বরে পেমেন্ট পাঠাবে':'Customers will send payments to these numbers'}</div>`+
+    Object.entries(D.ag).map(([k,ag])=>`<div class="card">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:11px"><span style="font-size:17px">${ico[k]}</span><div style="font-size:13px;font-weight:700;color:#E2E8F0">${ag.name}</div></div>
+      <label>${t('agentNumber')}</label><input id="an-${k}" type="tel" value="${ag.number}"/>
+      <label>${t('agentName')}</label><input id="anm-${k}" value="${ag.name}"/>
+    </div>`).join('')+
+    `<button class="btn btn-green" onclick="savag()">${t('saveAgents')}</button>`;
+}
+function savag(){Object.keys(D.ag).forEach(k=>{D.ag[k].number=(document.getElementById('an-'+k).value||'').trim();D.ag[k].name=(document.getElementById('anm-'+k).value||'').trim();});adfl(L==='bn'?'✅ এজেন্ট তথ্য সংরক্ষিত!':'✅ Agent info saved!','ok');}
+function radmcomm(){
+  const cls=["#10B981","#3B82F6","#EC4899","#8B5CF6"];
+  const clbls=L==='bn'?["১ম লেভেল (B)","২য় লেভেল (C)","৩য় লেভেল (D)","৪র্থ লেভেল (E)"]:["Level 1 (B)","Level 2 (C)","Level 3 (D)","Level 4 (E)"];
+  document.getElementById('acomm').innerHTML=`<div class="card">
+    <div class="sttl">${t('commEditor')}</div>
+    <div style="font-size:11px;color:#64748B;margin-bottom:13px">${t('commEdNote')}</div>
+    ${CR.map((r,i)=>`<div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06);margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+        <div style="font-size:12px;font-weight:700;color:${cls[i]}">${clbls[i]}</div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <input id="cri-${i}" type="number" step="0.1" min="0" max="80" value="${(r*100).toFixed(1)}" oninput="upcr(${i},this.value)" style="width:60px;text-align:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#E2E8F0;border-radius:7px;padding:5px;font-size:12px;font-weight:700;margin-bottom:0"/>
+          <span id="crd-${i}" style="font-size:10px;color:#475569;white-space:nowrap">= ৳${(DEP*r).toLocaleString()}</span>
+        </div>
+      </div>
+      <input type="range" min="0" max="80" step="0.5" value="${(r*100).toFixed(1)}" id="crs-${i}"
+        oninput="upcr(${i},this.value);document.getElementById('cri-${i}').value=parseFloat(this.value).toFixed(1)"
+        style="width:100%;accent-color:${cls[i]};height:18px;background:none;border:none;padding:0;margin:0"/>
+    </div>`).join('')}
+    <div id="crtot" style="background:rgba(245,158,11,.08);border-radius:9px;padding:10px 12px;border:1px solid rgba(245,158,11,.2);font-size:12px;text-align:center;margin-bottom:13px"></div>
+    <button class="btn btn-green" onclick="savcr()">${t('saveComm')}</button>
+  </div>`;ucrtot();
+}
+function upcr(i,v){CR[i]=parseFloat(v)/100||0;document.getElementById('crd-'+i).textContent='= ৳'+(DEP*CR[i]).toLocaleString();ucrtot();}
+function ucrtot(){
+  let tot=CR.reduce((s,r)=>s+r,0)*100,ash=(100-tot).toFixed(1);
+  let el=document.getElementById('crtot');if(!el)return;
+  el.innerHTML=`<span style="color:${tot>95?'#F87171':tot>88?'#FCD34D':'#34D399'}">${t('totCommLabel')}: <b>${tot.toFixed(1)}%</b></span> &nbsp;|&nbsp; <span style="color:#64748B">${t('adminProfit')}: ${ash}% (৳${(DEP*parseFloat(ash)/100).toLocaleString()})</span>`;
+}
+function savcr(){adfl(L==='bn'?`✅ কমিশন হার আপডেট! ${CR.map(r=>(r*100).toFixed(1)+'%').join(', ')}`:`✅ Commission rates updated! ${CR.map(r=>(r*100).toFixed(1)+'%').join(', ')}`,'ok');}
+function rsets(){
+  let an=find(1),ms=mems();
+  let pc=D.txs.filter(x=>x.status==='pending'),cf=D.txs.filter(x=>x.status==='confirmed');
+  let wp=D.wds.filter(x=>x.status==='pending'),ws=D.wds.filter(x=>x.status==='success');
+  let adminRate=1-CR.reduce((s,r)=>s+r,0);
+  document.getElementById('asets').innerHTML=`<div class="card">
+    <div class="sttl">📊 ${L==='bn'?'সিস্টেম পরিসংখ্যান':'System Statistics'}</div>
+    ${[[t('totalMembers'),ms.length,'#6366F1'],[t('totalDeposits'),'৳'+ms.reduce((s,m)=>s+(m.deposit||0),0).toLocaleString(),'#10B981'],['Confirmed TX',cf.length,'#34D399'],['Pending TX',pc.length,'#FCD34D'],['Success Withdrawals',ws.length,'#F472B6'],['Pending Withdrawals',wp.length,'#F59E0B'],[t('adminBalance')+'('+(adminRate*100).toFixed(1)+'%)', '৳'+(an?.balance||0).toLocaleString(),'#FCD34D']].map(([l,v,c])=>`<div class="row"><span style="font-size:11px;color:#94A3B8">${l}</span><span style="font-size:12px;color:${c};font-weight:700">${v}</span></div>`).join('')}
+  </div>
+  <div style="background:rgba(245,158,11,.07);border-radius:12px;padding:13px;border:1px solid rgba(245,158,11,.15)">
+    <div class="sttl">${t('commChart')}</div>
+    <div style="display:grid;grid-template-columns:1.2fr .7fr .5fr .8fr;gap:3px 6px;font-size:9px;margin-bottom:6px;color:#475569;font-weight:700">
+      <div>Level</div><div>Members</div><div>%</div><div>Total</div></div>
+    ${[[4,'B'],[16,'C'],[64,'D'],[256,'E']].map(([cnt,lv],i)=>{const cls=["#10B981","#3B82F6","#EC4899","#8B5CF6"];return`<div style="display:grid;grid-template-columns:1.2fr .7fr .5fr .8fr;gap:3px 6px;font-size:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="color:${cls[i]};font-weight:700">${lv}</div><div style="color:#94A3B8">${cnt}</div><div style="color:${cls[i]};font-weight:700">${(CR[i]*100).toFixed(1)}%</div><div style="color:${cls[i]};font-weight:700">৳${(cnt*DEP*CR[i]).toLocaleString()}</div></div>`;}).join('')}
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid rgba(255,255,255,.1);margin-top:4px">
+      <span style="font-size:11px;color:#FCD34D;font-weight:700">Total (340)</span>
+      <span style="font-size:11px;color:#FCD34D;font-weight:700">৳${[4,16,64,256].reduce((s,c,i)=>s+c*DEP*CR[i],0).toLocaleString()}</span>
+    </div>
+  </div>`;
+}
+show('s-login');
+
+</script></body></html>
