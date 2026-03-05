@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>RSM LIFE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#080812;color:#E2E8F0;font-family:Arial,sans-serif;min-height:100vh}
+#app{max-width:420px;margin:0 auto}
+input,button{font-family:Arial,sans-serif}
+.screen{display:none}.screen.active{display:block;min-height:100vh}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:16px;margin-bottom:13px}
+input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#E2E8F0;border-radius:10px;padding:11px 13px;width:100%;font-size:13px;outline:none;margin-bottom:10px}
+input:focus{border-color:rgba(99,102,241,.6)}input::placeholder{color:#475569}
+.btn{width:100%;padding:13px;border-radius:12px;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:9px}.btn:active{opacity:.8}
+.btn-blue{background:linear-gradient(135deg,#6366F1,#8B5CF6)}.btn-green{background:linear-gradient(135deg,#10B981,#059669)}.btn-amber{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.lnk{background:none;border:none;color:#6366F1;font-size:12px;font-weight:700;cursor:pointer;text-decoration:underline}
+.msg{padding:9px 13px;border-radius:9px;margin-bottom:11px;font-size:12px;display:none}
+.msg.ok{background:rgba(16,185,129,.12);color:#34D399;border:1px solid rgba(16,185,129,.3)}
+.msg.er{background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.3)}
+label{font-size:11px;color:#94A3B8;display:block;margin-bottom:4px}
+.sttl{font-size:12px;font-weight:700;color:#A78BFA;margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+/* ── SIDEBAR ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.open{opacity:1;pointer-events:all}
+.sidebar{position:fixed;left:-260px;top:0;width:240px;height:100%;background:linear-gradient(180deg,#0F0F1E 0%,#080812 100%);border-right:1px solid rgba(255,255,255,.08);z-index:300;transition:left .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:4px 0 24px rgba(0,0,0,.5)}
+.sidebar.open{left:0}
+.sb-hdr{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-item{display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;border:none;background:none;width:100%;text-align:left;color:#94A3B8;font-size:13px;font-weight:600;border-radius:0;transition:all .2s;position:relative;overflow:hidden}
+.sb-item::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:transparent;transition:all .2s}
+.sb-item:hover{background:rgba(255,255,255,.05);color:#E2E8F0}
+.sb-item:hover::before{background:rgba(99,102,241,.5)}
+.sb-item.on{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.1));color:#A78BFA}
+.sb-item.on::before{background:linear-gradient(180deg,#6366F1,#8B5CF6)}
+.sb-item .sb-ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.sb-item .sb-lbl{flex:1}
+.sb-item .sb-badge{background:rgba(239,68,68,.25);border:1px solid rgba(239,68,68,.4);border-radius:10px;padding:1px 7px;font-size:10px;color:#F87171;font-weight:700}
+.sb-div{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+/* Admin sidebar gold theme */
+.sb-item.adm.on{background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(217,119,6,.1));color:#FCD34D}
+.sb-item.adm.on::before{background:linear-gradient(180deg,#F59E0B,#D97706)}
+.sb-item.adm:hover{color:#FDE68A}
+/* Hamburger button */
+.hbg{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:9px;width:36px;height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .2s;flex-shrink:0}
+.hbg:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+.hbg:active{transform:scale(.93)}
+.hbg span{width:16px;height:2px;border-radius:2px;background:#94A3B8;transition:all .2s;display:block}
+.hbg:hover span{background:#E2E8F0}
+/* Bottom nav for USER (mobile tabs) */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:rgba(8,8,18,.97);border-top:1px solid rgba(255,255,255,.08);display:flex;z-index:100;padding:6px 0 10px}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;background:none;border:none;cursor:pointer;color:#475569;font-size:11px;font-weight:700;transition:all .2s;position:relative}
+.bn .bni{font-size:24px;transition:transform .2s}
+.bn.on{color:#A78BFA}
+.bn.on .bni{transform:scale(1.18)}
+.bn::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:3px;background:linear-gradient(90deg,#6366F1,#8B5CF6);border-radius:0 0 4px 4px;transition:width .25s}
+.bn.on::after{width:50%}
+/* ── QR MODAL ── */
+.qr-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.qr-modal.open{opacity:1;pointer-events:all}
+.qr-box{background:linear-gradient(160deg,#0F0F1E,#0A0A18);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:24px 20px;width:100%;max-width:320px;text-align:center;transform:scale(.92);transition:transform .25s}
+.qr-modal.open .qr-box{transform:scale(1)}
+/* ── SEARCH ── */
+.srch{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:9px 13px;margin-bottom:13px}
+.srch input{background:none;border:none;color:#E2E8F0;font-size:13px;outline:none;flex:1}
+.srch input::placeholder{color:#374151}
+/* ── SHARE BUTTONS ── */
+.sh-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;flex:1;transition:all .2s;position:relative;overflow:hidden}
+.sh-btn:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.sh-btn:active{transform:scale(.94) translateY(0);filter:brightness(.95)}
+/* Global button ripple & hover */
+.btn{transition:transform .15s,box-shadow .15s,filter .15s}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.btn:active{transform:scale(.96) translateY(0) !important;filter:brightness(.95)}
+/* vbtn / rbtn */
+.vbtn{transition:all .18s}.vbtn:hover{filter:brightness(1.1);transform:translateY(-1px)}.vbtn:active{transform:scale(.95)}
+.rbtn{transition:all .18s}.rbtn:hover{filter:brightness(1.1);transform:translateY(-1px)}.rbtn:active{transform:scale(.95)}
+/* bk / lo / lnk buttons */
+.bk{transition:all .18s}.bk:hover{filter:brightness(1.15);transform:translateY(-1px);box-shadow:0 3px 12px rgba(99,102,241,.25)}
+.lo{transition:all .18s}.lo:hover{filter:brightness(1.15);transform:translateY(-1px);box-shadow:0 3px 10px rgba(239,68,68,.25)}
+/* sb-item hover already handled */
+/* bn bottom nav */
+.bn{transition:all .18s}
+/* Live Chat pulse animation */
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.45)}60%{box-shadow:0 0 0 7px rgba(37,211,102,0)}}
+.live-btn{animation:livePulse 2s infinite}
+/* Copy btn flash */
+@keyframes copyFlash{0%,100%{background:rgba(99,102,241,.15)}50%{background:rgba(99,102,241,.35)}}
+.copy-flash{animation:copyFlash .4s ease}
+@keyframes sbSlideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.tc.on{animation:sbSlideIn .2s ease}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,.4)}50%{box-shadow:0 0 0 6px rgba(99,102,241,0)}}
+.btn:active{transform:scale(.97);opacity:.9}
+.btn{transition:transform .15s,opacity .15s}
+.tc{display:none;padding:13px 14px 100px}.tc.on{display:block}
+.stat{background:rgba(255,255,255,.04);border-radius:11px;padding:12px;border:1px solid rgba(255,255,255,.06);text-align:center}
+.sv{font-size:15px;font-weight:700;margin-bottom:3px}.sl{font-size:10px;color:#64748B}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}.row:last-child{border-bottom:none}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.bdg{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.bok{background:rgba(16,185,129,.15);color:#34D399}.bpn{background:rgba(245,158,11,.15);color:#FCD34D}.brj{background:rgba(239,68,68,.15);color:#F87171}
+.mr{display:flex;align-items:center;padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.05)}.mr:last-child{border-bottom:none}
+.bk{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.18));border:1.5px solid rgba(99,102,241,.45);color:#A78BFA;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:15px;display:inline-flex;align-items:center;gap:5px;letter-spacing:.3px;box-shadow:0 2px 8px rgba(99,102,241,.15);transition:all .2s}.bk:active{opacity:.75;transform:scale(.97)}
+.shdr{background:rgba(8,8,18,.97);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;padding:11px 14px 11px}
+.lo{background:linear-gradient(135deg,rgba(239,68,68,.25),rgba(220,38,38,.2));border:1.5px solid rgba(239,68,68,.45);border-radius:9px;color:#FCA5A5;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.3px;box-shadow:0 2px 8px rgba(239,68,68,.15);transition:all .2s}.lo:active{opacity:.75;transform:scale(.97)}
+.mtr{display:flex;gap:7px;margin-bottom:12px}
+.mb{flex:1;padding:8px 3px;border-radius:9px;border:2px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#64748B;font-size:11px;font-weight:700;cursor:pointer;text-align:center}
+.mb.on{border-color:#6366F1;background:rgba(99,102,241,.15);color:#A78BFA}
+.acd{background:rgba(255,255,255,.03);border-radius:11px;border:1px solid rgba(255,255,255,.07);margin-bottom:8px;overflow:hidden;cursor:pointer}
+.ahdr{display:flex;align-items:center;justify-content:space-between;padding:11px 13px}
+.abdy{display:none;padding:11px 13px;border-top:1px solid rgba(255,255,255,.07)}
+.vbtn{width:100%;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px}
+.rbtn{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.1);color:#F87171;font-size:11px;font-weight:700;cursor:pointer;margin-top:5px}
+.ltog{display:flex;background:rgba(255,255,255,.06);border-radius:20px;padding:2px;border:1px solid rgba(255,255,255,.1)}
+.lbtn{padding:4px 10px;border-radius:18px;border:none;font-size:10px;font-weight:700;cursor:pointer;background:none;color:#64748B}
+.lbtn.on{background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff}
+
+.eye-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#64748B;cursor:pointer}
+</style>
+  <!-- Firebase v8 SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+<!-- LOGIN -->
+<div id="s-login" class="screen active" style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px 20px">
+<div style="width:100%">
+<div style="display:flex;justify-content:center;margin-bottom:16px">
+<div class="ltog"><button class="lbtn on" onclick="sL('en')">English</button><button class="lbtn" onclick="sL('bn')">বাংলা</button></div>
+</div>
+<div style="text-align:center;margin-bottom:20px">
+<div style="font-size:30px;font-weight:900;letter-spacing:3px"><span style="color:#1E3A8A">RSM</span><span style="color:#0EA5E9"> LIFE</span></div>
+<div style="color:#F59E0B;font-size:13px;font-weight:700;margin-top:5px">✨ Change Your Life</div>
+<div style="color:#475569;font-size:11px;margin-top:2px">Build your future — Build your team</div>
+</div>
+<div class="card">
+<div style="font-size:15px;font-weight:700;color:#E2E8F0;margin-bottom:14px" id="lWelcome">Welcome 👋</div>
+<div class="msg" id="lMsg"></div>
+<label id="lUL">Username / Mobile Number</label>
+<input id="li" placeholder="Mobile or referral code" onkeydown="if(event.key==='Enter')doLogin()"/>
+<label id="lPL">Password</label>
+<div style="position:relative;margin-bottom:10px">
+<input id="lp" type="password" placeholder="Your password" style="margin-bottom:0;padding-right:42px" onkeydown="if(event.key==='Enter')doLogin()"/>
+<button onclick="tp('lp',this)" class="eye-btn">👁️</button>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#94A3B8;margin-bottom:0">
+<input type="checkbox" id="rememberMe" style="width:15px;height:15px;accent-color:#6366F1;margin-bottom:0;cursor:pointer"/>
+<span id="rememberLbl">Remember Me</span>
+</label>
+<button class="lnk" id="lFP" onclick="show('s-fp')">Forgot Password?</button>
+</div>
+<button class="btn btn-blue" onclick="doLogin()" id="lBtn">Login →</button>
+<div style="text-align:center;margin-top:5px"><span id="lNew" style="font-size:12px;color:#475569">New here? </span><button class="lnk" id="lReg" onclick="show('s-reg')">Register</button></div>
+</div></div></div>
+
+<!-- FORGOT PW -->
+<div id="s-fp" class="screen" style="padding:24px 20px">
+<button class="bk" onclick="show('s-login')">‹ <span id="fpBack">Back</span></button>
+<div class="card">
+<div style="font-size:15px;font-weight:700;color:#E2E8F0;margin-bottom:13px" id="fpTitle">🔍 Password Reset</div>
+<div class="msg" id="fpMsg"></div>
+<div id="fps1">
+<label id="fpML">Registered Mobile</label><input id="fpph" type="tel" placeholder="01XXXXXXXXX"/>
+<label>NID</label><input id="fpni" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="NID Number"/>
+<button class="btn btn-blue" id="fpVBtn" onclick="fpVerify()">Verify Identity →</button>
+</div>
+<div id="fps2" style="display:none">
+<div id="fpUser" style="background:rgba(16,185,129,.08);border-radius:9px;padding:10px;margin-bottom:12px;border:1px solid rgba(16,185,129,.2);font-size:12px;color:#34D399"></div>
+<label id="fpNPL">New Password</label><input id="fpnp" type="password" placeholder="Min 6 characters"/>
+<label id="fpCPL">Confirm Password</label><input id="fpcp" type="password" placeholder="Re-enter"/>
+<button class="btn btn-green" id="fpCBtn" onclick="fpReset()">✅ Change Password</button>
+</div></div></div>
+
+<!-- REGISTER -->
+<div id="s-reg" class="screen" style="padding:24px 20px 80px">
+<button class="bk" onclick="show('s-login')">‹ <span id="rgBack">Back</span></button>
+<div id="rgBanner" style="background:rgba(245,158,11,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(245,158,11,.2);font-size:11px;color:#FCD34D">ℹ️ <span id="rgBannerTxt">Without referral code → Registered under ADMIN</span></div>
+<div class="msg" id="rgMsg"></div>
+<div class="card">
+<div class="sttl" id="rgTitle">👤 Personal Information</div>
+<label id="rgNL">Full Name *</label><input id="rn" placeholder="Your full name"/>
+<label id="rgPHL">Mobile Number *</label><input id="rph" type="tel" placeholder="01XXXXXXXXX"/>
+<label>NID *</label><input id="rni" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="১০ বা ১৭ সংখ্যার NID নম্বর"/>
+<label id="rgRL">Referral Code (Optional)</label>
+<input id="rrf" placeholder="Leave empty if none" oninput="chkRf()" style="text-transform:uppercase;font-family:monospace;letter-spacing:2px"/>
+<label id="rgPWL">Password *</label>
+<div style="position:relative;margin-bottom:10px"><input id="rpw" type="password" placeholder="Min 6 characters" style="margin-bottom:0;padding-right:42px"/><button onclick="tp('rpw',this)" class="eye-btn">👁️</button></div>
+<label id="rgCPL">Confirm Password *</label><input id="rcp" type="password" placeholder="Re-enter"/>
+<div style="display:flex;justify-content:space-between;background:rgba(99,102,241,.08);border-radius:9px;padding:10px 13px;border:1px solid rgba(99,102,241,.18);margin-bottom:13px">
+<span id="rgDL" style="font-size:12px;color:#94A3B8">Required Deposit</span><b style="font-size:16px;color:#6366F1">৳5,000</b></div>
+<div id="adminCodeWrap" style="display:none;background:rgba(245,158,11,.07);border-radius:10px;padding:11px 13px;margin-bottom:12px;border:1px solid rgba(245,158,11,.25)">
+<div style="font-size:11px;color:#FCD34D;font-weight:700;margin-bottom:6px">🔐 Admin Secret Code</div>
+<input id="radmcode" type="password" placeholder="Admin code (শুধু Admin জানেন)" style="margin-bottom:0"/>
+</div>
+<button class="btn btn-green" onclick="doReg()" id="rgBtn">✅ Complete Registration</button>
+</div></div>
+
+<!-- USER APP -->
+<!-- USER SIDEBAR OVERLAY -->
+<div class="overlay" id="uOvl" onclick="closeSB('u')"></div>
+<div class="sidebar" id="uSB">
+  <div class="sb-hdr">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div id="sbAv" class="av" style="width:44px;height:44px;font-size:16px;border:2px solid rgba(99,102,241,.4)"></div>
+      <div><div id="sbName" style="font-size:13px;font-weight:700;color:#E2E8F0"></div><div id="sbCode" style="font-size:9px;color:#374151;font-family:monospace"></div></div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(5,150,105,.08));border-radius:9px;padding:9px 12px;border:1px solid rgba(16,185,129,.2)">
+      <div style="font-size:9px;color:#6EE7B7;margin-bottom:2px">মোট ব্যালেন্স</div>
+      <div id="sbBal" style="font-size:18px;font-weight:700;color:#10B981">৳0</div>
+    </div>
+  </div>
+  <div style="padding:8px 0">
+    <button class="sb-item" onclick="uTab('profile');closeSB('u');window.scrollTo(0,0)"><span class="sb-ico">🏠</span><span class="sb-lbl">ড্যাশবোর্ড</span></button>
+    <button class="sb-item on" id="sbi-profile" onclick="uTab('profile');closeSB('u')"><span class="sb-ico">👤</span><span class="sb-lbl" id="sbl-profile">প্রোফাইল</span></button>
+    <button class="sb-item" id="sbi-dep" onclick="uTab('dep');closeSB('u')"><span class="sb-ico">💳</span><span class="sb-lbl" id="sbl-dep">ডিপোজিট</span></button>
+    <button class="sb-item" id="sbi-comm" onclick="uTab('comm');closeSB('u')"><span class="sb-ico">💰</span><span class="sb-lbl" id="sbl-comm">কমিশন</span></button>
+    <button class="sb-item" id="sbi-wd" onclick="uTab('wd');closeSB('u')"><span class="sb-ico">🏧</span><span class="sb-lbl" id="sbl-wd">উত্তোলন</span></button>
+    <div class="sb-div"></div>
+    <button class="sb-item" id="sbi-hist" onclick="uTab('hist');closeSB('u')"><span class="sb-ico">📋</span><span class="sb-lbl" id="sbl-hist">হিস্ট্রি</span></button>
+    <button class="sb-item" id="sbi-tree" onclick="uTab('tree');closeSB('u')"><span class="sb-ico">🌳</span><span class="sb-lbl" id="sbl-tree">নেটওয়ার্ক</span></button>
+    <div class="sb-div"></div>
+    <div style="padding:8px 18px">
+      <div class="ltog" style="justify-content:center"><button class="lbtn on" onclick="sL('en')" style="padding:5px 14px;font-size:11px">EN</button><button class="lbtn" onclick="sL('bn')" style="padding:5px 14px;font-size:11px">বাং</button></div>
+    </div>
+    <button class="sb-item" onclick="doLogout()" style="color:#F87171;margin-top:4px"><span class="sb-ico">⏻</span><span class="sb-lbl">লগআউট</span></button>
+  </div>
+</div>
+
+<div id="s-app" class="screen">
+<div class="shdr">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;align-items:center;gap:9px">
+<button class="hbg" onclick="openSB('u')"><span></span><span></span><span></span></button>
+<div style="position:relative">
+<div id="hAv" class="av" style="width:32px;height:32px;font-size:12px;border:2px solid rgba(99,102,241,.4)"></div>
+<label style="position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:#6366F1;border:2px solid #080812;display:flex;align-items:center;justify-content:center;font-size:7px;cursor:pointer">📷<input type="file" accept="image/*" onchange="upAv(event)" style="display:none"/></label>
+</div>
+<div><div id="hName" style="font-size:12px;font-weight:700;color:#E2E8F0"></div><div id="hCode" style="font-size:9px;color:#374151;font-family:monospace"></div></div>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<div style="text-align:right"><div id="hBal" style="font-size:13px;font-weight:700;color:#10B981">৳0</div><div style="font-size:8px;color:#374151" id="hBalL">Balance</div></div>
+<button class="lo" onclick="doLogout()" id="hLogout">⏻ Logout</button>
+</div>
+</div>
+</div>
+<div id="uFlash" style="padding:0 14px"></div>
+
+<!-- PROFILE TAB -->
+<div id="tc-profile" class="tc on">
+<div style="background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:15px;padding:17px;margin-bottom:12px;border:1px solid rgba(99,102,241,.3)">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="position:relative">
+<div id="pAv" class="av" style="width:58px;height:58px;font-size:20px;border:3px solid rgba(255,255,255,.2)"></div>
+<label style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:#6366F1;border:2px solid #080812;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer">📷<input type="file" accept="image/*" onchange="upAv(event)" style="display:none"/></label>
+</div>
+<div><div id="pName" style="font-size:14px;font-weight:700;color:#fff"></div><div id="pSub" style="font-size:9px;color:rgba(255,255,255,.4);margin-bottom:5px"></div><div id="pBadge" style="display:inline-block;background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.3);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#FBB924"></div></div>
+</div></div>
+<!-- SINGLE BALANCE CARD -->
+<div style="background:linear-gradient(135deg,#0F2027,#203A43);border-radius:13px;padding:14px 16px;margin-bottom:12px;border:1px solid rgba(16,185,129,.25)">
+<div id="pBalL" style="font-size:10px;color:#6EE7B7;margin-bottom:3px">Total Balance (Commission + Earnings)</div>
+<div id="pBal" style="font-size:26px;font-weight:700;color:#10B981">৳0</div>
+<div id="pBalSub" style="font-size:9px;color:#475569;margin-top:2px"></div>
+</div>
+<!-- REFERRAL CODE -->
+<div style="background:linear-gradient(135deg,#064E3B,#065F46);border-radius:11px;padding:11px 13px;margin-bottom:12px;border:1px solid rgba(52,211,153,.2)">
+<div id="pRefL" style="font-size:10px;color:#6EE7B7;margin-bottom:6px;font-weight:700">🎁 Your Referral Code (Max 4 referrals)</div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+<span id="pRefCode" style="font-size:22px;font-weight:700;color:#fff;letter-spacing:3px;font-family:monospace"></span>
+<div style="display:flex;gap:5px">
+<button onclick="copyCode()" id="pCopyBtn" style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.35);color:#34D399;border-radius:7px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s">📋</button>
+<button onclick="openQR()" style="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.35);color:#34D399;border-radius:7px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s">📲 QR</button>
+</div>
+</div>
+<div style="display:flex;gap:6px;margin-bottom:6px">
+<button onclick="openLiveChat()" class="live-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px;border-radius:8px;border:1px solid rgba(37,211,102,.35);background:rgba(37,211,102,.15);color:#25D366;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s">
+💬 লাইভ চ্যাট
+</button>
+<button onclick="copyQRLink()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:8px;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.15);color:#A78BFA;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s">
+🔗 লিংক কপি
+</button>
+</div>
+<div id="pSlots" style="font-size:9px;color:rgba(52,211,153,.6);margin-top:2px"></div>
+</div>
+<div class="g2" id="pStats"></div>
+<div style="background:rgba(255,255,255,.02);border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.05)" id="pInfo"></div>
+</div>
+
+<!-- DEPOSIT TAB -->
+<div id="tc-dep" class="tc">
+<div class="card"><div class="sttl" id="dAgL">📱 Payment Agent Numbers</div><div id="agAcc"></div></div>
+<div class="card">
+<div class="sttl" id="dSubL">💸 Submit Deposit</div>
+<div class="mtr">
+<button class="mb on" onclick="sMth('bkash',this,'dep')">💗<br>bKash</button>
+<button class="mb" onclick="sMth('nagad',this,'dep')">🟠<br>Nagad</button>
+<button class="mb" onclick="sMth('rocket',this,'dep')">🚀<br>Rocket</button>
+</div>
+<div class="msg" id="dMsg"></div>
+<label id="dTxL">Transaction ID *</label><input id="dTx" placeholder="TX ID"/>
+<label id="dMobL">Your Mobile *</label><input id="dMob" type="tel" placeholder="01XXXXXXXXX"/>
+<label id="dAmtL">Amount (৳)</label><input id="dAmt" type="number" value="5000"/>
+<div id="dNote" style="background:rgba(16,185,129,.07);border-radius:8px;padding:8px 11px;margin-bottom:12px;border:1px solid rgba(16,185,129,.15);font-size:11px;color:#6EE7B7">ℹ️ Commission distributed after admin verification</div>
+<button class="btn btn-blue" onclick="subDep()" id="dBtn">📤 Submit Deposit</button>
+</div></div>
+
+<!-- COMMISSION TAB -->
+<div id="tc-comm" class="tc">
+<div style="background:linear-gradient(135deg,#0F2027,#203A43);border-radius:15px;padding:16px;margin-bottom:12px;border:1px solid rgba(16,185,129,.2)">
+<div id="cTotL" style="font-size:10px;color:#6EE7B7;margin-bottom:2px">Total Balance</div>
+<div id="cTot" style="font-size:26px;font-weight:700;color:#10B981">৳0</div>
+<div id="cSub" style="font-size:10px;color:#475569;margin-top:2px"></div>
+</div>
+<div style="background:rgba(255,255,255,.02);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.05);margin-bottom:12px">
+<div id="cBrkL" style="padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;font-weight:700;color:#A78BFA">⛓️ Commission Breakdown</div>
+<div id="cBrk"></div></div>
+<div style="background:rgba(245,158,11,.07);border-radius:11px;padding:12px;border:1px solid rgba(245,158,11,.15)">
+<div id="cChartL" style="font-size:11px;font-weight:700;color:#FCD34D;margin-bottom:8px">📊 Commission Chart (4 referrals each)</div>
+<div id="cChart"></div>
+<div id="cNote" style="margin-top:8px;font-size:10px;color:#475569;line-height:1.5">💡 <b style="color:#FCD34D">88%</b> to members · <b style="color:#F59E0B">12%</b> to admin · Level 2 (16 members) = ৳48,000!</div>
+</div></div>
+
+<!-- WITHDRAW TAB -->
+<div id="tc-wd" class="tc">
+<div style="background:rgba(255,255,255,.02);border-radius:11px;padding:11px 13px;margin-bottom:12px;border:1px solid rgba(99,102,241,.2)">
+<div id="wBalL" style="font-size:10px;color:#94A3B8;margin-bottom:2px">Available Balance</div>
+<div id="wBal" style="font-size:22px;font-weight:700;color:#10B981">৳0</div>
+<div id="wMinL" style="font-size:9px;color:#475569;margin-top:2px">Minimum withdrawal: ৳1,000</div>
+</div>
+<div class="card">
+<div class="sttl" id="wReqL">🏧 Withdrawal Request</div>
+<div class="mtr">
+<button class="mb on" onclick="sMth('bkash',this,'wd')">💗<br>bKash</button>
+<button class="mb" onclick="sMth('nagad',this,'wd')">🟠<br>Nagad</button>
+<button class="mb" onclick="sMth('rocket',this,'wd')">🚀<br>Rocket</button>
+</div>
+<div class="msg" id="wMsg"></div>
+<label id="wAmtL">Amount (৳) *</label><input id="wAmt" type="number" placeholder="Min ৳1,000"/>
+<label id="wAccL">Account Number *</label><input id="wAcc" type="tel" placeholder="01XXXXXXXXX"/>
+<label id="wPinL">Security Password *</label>
+<div style="position:relative;margin-bottom:10px"><input id="wPin" type="password" placeholder="Your login password" style="margin-bottom:0;padding-right:42px"/><button onclick="tp('wPin',this)" class="eye-btn">👁️</button></div>
+<div id="wNote" style="background:rgba(245,158,11,.07);border-radius:8px;padding:8px 11px;margin-bottom:12px;border:1px solid rgba(245,158,11,.15);font-size:11px;color:#FCD34D">⚠️ You will be notified when admin sends payment</div>
+<button class="btn btn-amber" onclick="subWd()" id="wBtn">🏧 Request Withdrawal</button>
+</div>
+<div class="card"><div class="sttl" id="wHistL">📋 Withdrawal History</div><div id="wHist"></div></div>
+</div>
+
+<!-- HISTORY TAB -->
+<div id="tc-hist" class="tc">
+<div style="display:flex;gap:5px;margin-bottom:12px">
+<button id="hBtD" onclick="hTab('d',this)" style="flex:1;padding:7px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;font-size:10px;font-weight:700;cursor:pointer">💳 <span id="hTDL">Deposits</span></button>
+<button id="hBtC" onclick="hTab('c',this)" style="flex:1;padding:7px;border-radius:8px;border:none;background:rgba(255,255,255,.05);color:#475569;font-size:10px;font-weight:700;cursor:pointer">💰 <span id="hTCL">Commissions</span></button>
+<button id="hBtW" onclick="hTab('w',this)" style="flex:1;padding:7px;border-radius:8px;border:none;background:rgba(255,255,255,.05);color:#475569;font-size:10px;font-weight:700;cursor:pointer">🏧 <span id="hTWL">Withdrawals</span></button>
+</div>
+<div id="hList"></div></div>
+
+<!-- TREE TAB (USER - own downline only) -->
+<div id="tc-tree" class="tc">
+<div id="uTSel" style="display:none;background:rgba(99,102,241,.08);border-radius:11px;padding:9px 12px;margin-bottom:11px;border:1px solid rgba(99,102,241,.2)"></div>
+<div style="background:rgba(255,255,255,.02);border-radius:12px;padding:12px 5px;border:1px solid rgba(255,255,255,.05);overflow-x:auto;min-height:140px">
+<div id="uTW" style="display:flex;justify-content:center;min-width:max-content;padding:6px 0"></div>
+</div>
+<div style="margin-top:8px;font-size:10px;color:#374151;text-align:center" id="uTNote">👆 Tap a member to see details (only your downline)</div>
+</div>
+<!-- BOTTOM NAV BAR — ৩টি মূল বাটন -->
+<nav class="bnav">
+  <button class="bn on" id="bn-profile" onclick="uTab('profile')"><span class="bni">👤</span><span>প্রোফাইল</span></button>
+  <button class="bn" id="bn-dep" onclick="uTab('dep')"><span class="bni">💳</span><span>ডিপোজিট</span></button>
+  <button class="bn" id="bn-tree" onclick="uTab('tree')"><span class="bni">🌳</span><span>নেটওয়ার্ক</span></button>
+</nav>
+</div><!-- end s-app -->
+
+<!-- ADMIN SIDEBAR -->
+<div class="overlay" id="aOvl" onclick="closeSB('a')"></div>
+<div class="sidebar" id="aSB">
+  <div class="sb-hdr">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">👑</div>
+      <div><div style="font-size:13px;font-weight:700;color:#F59E0B">RSM LIFE</div><div style="font-size:10px;color:#475569;font-weight:600">Admin Panel</div></div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(217,119,6,.08));border-radius:9px;padding:9px 12px;border:1px solid rgba(245,158,11,.2)">
+      <div id="aBal" style="font-size:10px;color:#FDE68A">Balance: ৳0</div>
+    </div>
+  </div>
+  <div style="padding:8px 0">
+    <button class="sb-item adm" onclick="aTab('users');closeSB('a');window.scrollTo(0,0)"><span class="sb-ico">🏠</span><span class="sb-lbl">ড্যাশবোর্ড</span></button>
+    <button class="sb-item adm on" id="asbi-users" onclick="aTab('users');closeSB('a')"><span class="sb-ico">👥</span><span class="sb-lbl">Members</span></button>
+    <button class="sb-item adm" id="asbi-deps" onclick="aTab('deps');closeSB('a')"><span class="sb-ico">💳</span><span class="sb-lbl">Deposits</span><span class="sb-badge" id="aDepBdg" style="display:none">0</span></button>
+    <button class="sb-item adm" id="asbi-wds" onclick="aTab('wds');closeSB('a')"><span class="sb-ico">🏧</span><span class="sb-lbl">Withdraw</span><span class="sb-badge" id="aWdBdg" style="display:none">0</span></button>
+    <div class="sb-div"></div>
+    <button class="sb-item adm" id="asbi-agnts" onclick="aTab('agnts');closeSB('a')"><span class="sb-ico">📱</span><span class="sb-lbl">Agents</span></button>
+    <button class="sb-item adm" id="asbi-comm" onclick="aTab('comm');closeSB('a')"><span class="sb-ico">⛓️</span><span class="sb-lbl">Commission</span></button>
+    <button class="sb-item adm" id="asbi-atree" onclick="aTab('atree');closeSB('a')"><span class="sb-ico">🌳</span><span class="sb-lbl">Tree</span></button>
+    <button class="sb-item adm" id="asbi-sets" onclick="aTab('sets');closeSB('a')"><span class="sb-ico">⚙️</span><span class="sb-lbl">Settings</span></button>
+    <div class="sb-div"></div>
+    <div style="padding:8px 18px">
+      <div class="ltog" style="justify-content:center"><button class="lbtn on" onclick="sL('en')" style="padding:5px 14px;font-size:11px">EN</button><button class="lbtn" onclick="sL('bn')" style="padding:5px 14px;font-size:11px">বাং</button></div>
+    </div>
+    <button class="sb-item" onclick="doLogout()" style="color:#F87171;margin-top:4px"><span class="sb-ico">⏻</span><span class="sb-lbl">Logout</span></button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="s-admin" class="screen">
+<div class="shdr">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;align-items:center;gap:9px">
+<button class="hbg" onclick="openSB('a')"><span></span><span></span><span></span></button>
+<div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:14px">👑</div>
+<div><div style="font-size:12px;font-weight:700;color:#F59E0B">RSM LIFE — Admin</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:6px">
+<div id="aPend" style="display:none;background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);border-radius:7px;padding:3px 8px;font-size:10px;color:#F87171;font-weight:700"></div>
+<button class="lo" onclick="doLogout()">⏻ Logout</button>
+</div>
+</div>
+</div>
+<div id="aFlash" style="padding:0 14px;margin-top:7px"></div>
+<div id="atc-users" class="tc on"><div id="aEdit" style="display:none;padding-bottom:20px"></div><div id="aList"></div></div>
+<div id="atc-deps" class="tc"><div id="aDepList"></div></div>
+<div id="atc-wds" class="tc"><div id="aWdList"></div></div>
+<div id="atc-agnts" class="tc"><div id="aAgList"></div></div>
+<div id="atc-comm" class="tc"><div id="aCommEdit"></div></div>
+<div id="atc-atree" class="tc">
+<div id="aTSel" style="display:none;background:rgba(245,158,11,.08);border-radius:11px;padding:10px 13px;margin-bottom:11px;border:1px solid rgba(245,158,11,.2)"></div>
+<div style="background:rgba(255,255,255,.02);border-radius:12px;padding:12px 5px;border:1px solid rgba(255,255,255,.05);overflow-x:auto;min-height:140px">
+<div id="aTW" style="display:flex;justify-content:center;min-width:max-content;padding:6px 0"></div></div>
+<div style="margin-top:8px;font-size:10px;color:#374151;text-align:center">👆 Tap any member → Enter their account</div>
+</div>
+<div id="atc-sets" class="tc"><div id="aSetList"></div></div>
+</div><!-- end s-admin -->
+<!-- QR CODE MODAL -->
+<div class="qr-modal" id="qrModal" onclick="closeQR(event)">
+  <div class="qr-box">
+    <div style="font-size:13px;font-weight:700;color:#6EE7B7;margin-bottom:4px">🎁 আপনার রেফারেল কোড</div>
+    <div id="qrCode" style="font-size:22px;font-weight:700;color:#fff;letter-spacing:4px;font-family:monospace;margin-bottom:16px"></div>
+    <!-- QR Code (generated by qrcode.js) -->
+    <div id="qrCanvas" style="display:flex;justify-content:center;margin-bottom:16px"></div>
+    <div id="qrName" style="font-size:11px;color:#64748B;margin-bottom:16px"></div>
+    <!-- Share buttons -->
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="sh-btn live-btn" onclick="openLiveChat()" style="background:linear-gradient(135deg,#25D366,#1aad52);color:#fff">
+        💬 লাইভ চ্যাট
+      </button>
+      <button class="sh-btn" onclick="shareFB()" style="background:linear-gradient(135deg,#1877F2,#0C5AC8);color:#fff">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Facebook
+      </button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="sh-btn" id="copyLinkBtn" onclick="copyQRLink()" style="background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.35);color:#A78BFA;flex:1">
+        🔗 লিংক কপি
+      </button>
+      <button class="sh-btn" onclick="downloadQR()" style="background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.35);color:#34D399;flex:1">
+        💾 QR সেভ
+      </button>
+    </div>
+    <button onclick="document.getElementById('qrModal').classList.remove('open')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#64748B;border-radius:9px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;width:100%">✕ বন্ধ করুন</button>
+  </div>
+</div>
+
+</div><!-- end #app -->
+<script>
+
+
+
+
+// UI helper
+const $=(id)=>document.getElementById(id);
+const set=(id,v)=>{let e=$(id);if(e)e.textContent=v;};
+const setH=(id,v)=>{let e=$(id);if(e)e.innerHTML=v;};
+
+// FIREBASE CONFIGURATION (চূড়ান্ত / Final)
+const firebaseConfig = {
+  apiKey: 'AIzaSyAnAdAPhyTZjHewSNqIrmtWW3lUwFKdAlE',
+  authDomain: 'rsm-life.firebaseapp.com',
+  databaseURL: 'https://rsm-life-default-rtdb.firebaseio.com',
+  projectId: 'rsm-life',
+  storageBucket: 'rsm-life.firebasestorage.app',
+  messagingSenderId: '998845333999',
+  appId: '1:998845333999:web:40f7f2b999be93c037361a',
+  measurementId: 'G-343PB9SV4F'
+};
+firebase.initializeApp(firebaseConfig);
+const db   = firebase.firestore();
+const auth = firebase.auth();
+
+// PART 1 — Core: State, Firebase Sync, Auth, UI Utils
+// FIRESTORE PATHS
+const FS_DATA  = 'rsmlife_v3';
+const FS_ADMIN = 'rsmlife_admin_cfg';
+
+let _unsubscribe = null;
+let _fbTimer     = null;
+let _qrInstance  = null;
+
+// TRANSLATION STRINGS
+const TX={
+en:{welcome:"Welcome 👋",unLbl:"Username / Mobile Number",pwLbl:"Password",forgot:"Forgot Password?",loginBtn:"Login →",newHere:"New here? ",regLnk:"Register",back:"Back",resetTitle:"🔍 Password Reset",regMob:"Registered Mobile",verifyBtn:"Verify →",newPwLbl:"New Password",confirmPwLbl:"Confirm Password",changePwBtn:"✅ Change Password",noRefMsg:"ℹ️ Without referral code → Registered under ADMIN",persInfoTitle:"👤 Personal Information",fullNameLbl:"Full Name *",mobileLbl:"Mobile Number *",refCodeLbl:"Referral Code (Optional)",pwLbl2:"Password *",confirmPwLbl2:"Confirm Password *",reqDepLbl:"Required Deposit",completeRegBtn:"✅ Complete Registration",totBalLbl:"Total Balance (Commission + Earnings)",refCodeTitle:"🎁 Your Referral Code (Max 4 referrals)",copyBtn:"📋 Copy",balLbl:"Balance",logoutBtn:"Logout",tabProfile:"Profile",tabDep:"Deposit",tabComm:"Commission",tabWd:"Withdraw",tabHist:"History",tabTree:"Network",agentNumsLbl:"📱 Payment Agent Numbers",subDepLbl:"💸 Submit Deposit",txIdLbl:"Transaction ID *",senderMobLbl:"Your Mobile *",amtLbl:"Amount (৳)",depNote:"ℹ️ Commission distributed after admin verification",subDepBtn:"📤 Submit Deposit",totCommLbl:"Total Balance",commBreakLbl:"⛓️ Commission Breakdown",commChartLbl:"📊 Commission Chart (4 each)",commNoteTxt:"💡 88% to members · 12% to admin · Level 2 (16 members) = ৳48,000!",availBalLbl:"Available Balance",minWdLbl:"Minimum withdrawal: ৳1,000",wdReqLbl:"🏧 Withdrawal Request",wdAmtLbl:"Amount (৳) *",wdAccLbl:"Account Number *",wdPinLbl:"Security Password *",wdNoteTxt:"⚠️ You will be notified when admin sends payment",wdBtn:"🏧 Request Withdrawal",wdHistLbl:"📋 Withdrawal History",depTabLbl:"Deposits",commTabLbl:"Commissions",wdTabLbl:"Withdrawals",treeNoteTxt:"👆 Tap a member to see details (only your downline)",pending:"⏳ Pending",confirmed:"✅ Confirmed",rejected:"❌ Rejected",success:"✅ Success",verifyDistBtn:"✅ Verify & Distribute Commission",cancelBtn:"❌ Cancel",paySuccessBtn:"✅ Mark Payment Successful",noDepTxt:"No deposits yet",noCommTxt:"No commission earned yet",noWdTxt:"No withdrawals yet",currPwLbl:"Current Password",newPwChangeLbl:"New Password (to change)",saveChangesBtn:"✅ Save Changes",totalMembers:"Total Members",totalDeposits:"Total Deposits",adminBalance:"Admin Balance",commEditorLbl:"⛓️ Edit Commission Rates",commEdNote:"Adjust each level commission %.",saveCommBtn:"💾 Save Rates",totCommRate:"Total Commission",adminProfitLbl:"Admin Profit",saveAgentsBtn:"💾 Save",agentNumLbl:"Agent Number",agentNameLbl:"Display Name",levelLbl:"Level",idLbl:"ID",rankLbl:"Rank",teamSizeLbl:"Team Size",refLbl:"Referrals",slotsLbl:"Slots used"},
+bn:{welcome:"স্বাগতম 👋",unLbl:"ইউজারনেম / মোবাইল নম্বর",pwLbl:"পাসওয়ার্ড",forgot:"পাসওয়ার্ড ভুলে গেছেন?",loginBtn:"লগইন করুন →",newHere:"নতুন? ",regLnk:"রেজিস্ট্রেশন করুন",back:"ফিরুন",resetTitle:"🔍 পাসওয়ার্ড রিসেট",regMob:"নিবন্ধিত মোবাইল",verifyBtn:"যাচাই করুন →",newPwLbl:"নতুন পাসওয়ার্ড",confirmPwLbl:"কনফার্ম পাসওয়ার্ড",changePwBtn:"✅ পাসওয়ার্ড পরিবর্তন করুন",noRefMsg:"ℹ️ রেফার কোড ছাড়া → সরাসরি ADMIN এর অধীনে",persInfoTitle:"👤 ব্যক্তিগত তথ্য",fullNameLbl:"পুরো নাম *",mobileLbl:"মোবাইল নম্বর *",refCodeLbl:"রেফারেল কোড (ঐচ্ছিক)",pwLbl2:"পাসওয়ার্ড *",confirmPwLbl2:"কনফার্ম পাসওয়ার্ড *",reqDepLbl:"প্রয়োজনীয় ডিপোজিট",completeRegBtn:"✅ রেজিস্ট্রেশন সম্পন্ন করুন",totBalLbl:"মোট ব্যালেন্স (কমিশন + আয়)",refCodeTitle:"🎁 আপনার রেফারেল কোড (সর্বোচ্চ ৪ জন)",copyBtn:"📋 কপি",balLbl:"ব্যালেন্স",logoutBtn:"লগআউট",tabProfile:"প্রোফাইল",tabDep:"ডিপোজিট",tabComm:"কমিশন",tabWd:"উত্তোলন",tabHist:"হিস্ট্রি",tabTree:"নেটওয়ার্ক",agentNumsLbl:"📱 পেমেন্ট এজেন্ট নম্বর",subDepLbl:"💸 ডিপোজিট সাবমিট",txIdLbl:"ট্রানজেকশন আইডি *",senderMobLbl:"আপনার মোবাইল *",amtLbl:"পরিমাণ (৳)",depNote:"ℹ️ অ্যাডমিন ভেরিফাই করলে কমিশন বিতরণ হবে",subDepBtn:"📤 ডিপোজিট সাবমিট করুন",totCommLbl:"মোট ব্যালেন্স",commBreakLbl:"⛓️ কমিশন বিভাজন",commChartLbl:"📊 কমিশন চার্ট (৪ জন করে)",commNoteTxt:"💡 ৮৮% সদস্যদের · ১২% অ্যাডমিনের · ২য় লেভেল (১৬ জন) = ৳৪৮,০০০!",availBalLbl:"উত্তোলনযোগ্য ব্যালেন্স",minWdLbl:"সর্বনিম্ন উত্তোলন: ৳১,০০০",wdReqLbl:"🏧 উত্তোলন রিকোয়েস্ট",wdAmtLbl:"পরিমাণ (৳) *",wdAccLbl:"একাউন্ট নম্বর *",wdPinLbl:"নিরাপত্তা পাসওয়ার্ড *",wdNoteTxt:"⚠️ অ্যাডমিন পেমেন্ট করলে নোটিফিকেশন পাবেন",wdBtn:"🏧 উত্তোলন রিকোয়েস্ট করুন",wdHistLbl:"📋 উত্তোলন হিস্ট্রি",depTabLbl:"ডিপোজিট",commTabLbl:"কমিশন আয়",wdTabLbl:"উত্তোলন",treeNoteTxt:"👆 নোড ট্যাপ করলে তথ্য দেখুন (শুধু নিজের ডাউনলাইন)",pending:"⏳ অপেক্ষমাণ",confirmed:"✅ নিশ্চিত",rejected:"❌ বাতিল",success:"✅ সফল",verifyDistBtn:"✅ ভেরিফাই — কমিশন বিতরণ",cancelBtn:"❌ বাতিল করুন",paySuccessBtn:"✅ পেমেন্ট সফল করুন",noDepTxt:"কোনো ডিপোজিট নেই",noCommTxt:"কোনো কমিশন আয় নেই",noWdTxt:"কোনো উত্তোলন নেই",currPwLbl:"বর্তমান পাসওয়ার্ড",newPwChangeLbl:"নতুন পাসওয়ার্ড (পরিবর্তন করতে)",saveChangesBtn:"✅ পরিবর্তন সংরক্ষণ করুন",totalMembers:"মোট সদস্য",totalDeposits:"মোট ডিপোজিট",adminBalance:"অ্যাডমিন ব্যালেন্স",commEditorLbl:"⛓️ কমিশন হার পরিবর্তন করুন",commEdNote:"প্রতিটি লেভেলের কমিশন % পরিবর্তন করুন।",saveCommBtn:"💾 সংরক্ষণ করুন",totCommRate:"মোট কমিশন",adminProfitLbl:"অ্যাডমিন প্রফিট",saveAgentsBtn:"💾 সংরক্ষণ করুন",agentNumLbl:"এজেন্ট নম্বর",agentNameLbl:"প্রদর্শন নাম",levelLbl:"লেভেল",idLbl:"আইডি",rankLbl:"র‍্যাংক",teamSizeLbl:"টিম সাইজ",refLbl:"রেফারেল",slotsLbl:"স্লট ব্যবহৃত"}
+}
+
+let L='en';
+const t=k=>TX[L][k]||TX.en[k]||k;
+
+const TI={lWelcome:'welcome',lUL:'unLbl',lPL:'pwLbl',lFP:'forgot',lBtn:'loginBtn',lNew:'newHere',lReg:'regLnk',fpBack:'back',fpTitle:'resetTitle',fpML:'regMob',fpVBtn:'verifyBtn',fpNPL:'newPwLbl',fpCPL:'confirmPwLbl',fpCBtn:'changePwBtn',rgBack:'back',rgBannerTxt:'noRefMsg',rgTitle:'persInfoTitle',rgNL:'fullNameLbl',rgPHL:'mobileLbl',rgRL:'refCodeLbl',rgPWL:'pwLbl2',rgCPL:'confirmPwLbl2',rgDL:'reqDepLbl',rgBtn:'completeRegBtn',hBalL:'balLbl',hLogout:'logoutBtn',uTP:'tabProfile',uTD:'tabDep',uTC:'tabComm',uTW:'tabWd',uTH:'tabHist',uTT:'tabTree',pBalL:'totBalLbl',pRefL:'refCodeTitle',pCopyBtn:'copyBtn',dAgL:'agentNumsLbl',dSubL:'subDepLbl',dTxL:'txIdLbl',dMobL:'senderMobLbl',dAmtL:'amtLbl',dNote:'depNote',dBtn:'subDepBtn',cTotL:'totCommLbl',cBrkL:'commBreakLbl',cChartL:'commChartLbl',cNote:'commNoteTxt',wBalL:'availBalLbl',wMinL:'minWdLbl',wReqL:'wdReqLbl',wAmtL:'wdAmtLbl',wAccL:'wdAccLbl',wPinL:'wdPinLbl',wNote:'wdNoteTxt',wBtn:'wdBtn',wHistL:'wdHistLbl',hTDL:'depTabLbl',hTCL:'commTabLbl',hTWL:'wdTabLbl',uTNote:'treeNoteTxt'}
+
+// CONSTANTS & DATA
+const DEP=5000, MXR=4, MIN_WD=1000;
+let CR=[0.25,0.60,0.015,0.015];
+const LBL={0:"Admin",1:"A",2:"B",3:"C",4:"D",5:"E",6:"F",7:"G"};
+const COL={0:"#F59E0B",1:"#6366F1",2:"#10B981",3:"#3B82F6",4:"#EC4899",5:"#8B5CF6",6:"#F97316",7:"#06B6D4"};
+const ICO={bkash:'💗',nagad:'🟠',rocket:'🚀'};
+
+// TREE HELPERS (mkNode/mkCode defined BEFORE G object)
+function mkCode(name,id){
+  let c=(name||'USER').replace(/[^a-zA-Z]/g,'').toUpperCase()||'USER';
+  return c.slice(0,4).padEnd(4,'X')+String(id).padStart(3,'0');
+}
+
+function mkNode(id,nm,lv,pid,ph,ni,pw,ch=[]){
+  return{id,name:nm,level:lv,deposit:lv===0?0:DEP,parentId:pid,
+    referralCode:mkCode(nm,id),phone:ph||'',nid:ni||'',password:pw||'',
+    avatar:null,balance:0,children:ch};
+}
+
+function flat(n,a=[]){a.push(n);n.children.forEach(c=>flat(c,a));return a;}
+
+function findNode(id,n=G.tree){
+  if(!n)return null;
+  if(n.id==id)return n;
+  for(let c of n.children){let r=findNode(id,c);if(r)return r;}
+  return null;
+}
+
+function allNodes(){return flat(G.tree);}
+
+function allMembers(){return allNodes().filter(n=>n.level>0);}
+
+function updNode(id,fn){
+  function go(n){
+    if(n.id==id){let u=fn(n);u.children=n.children;return u;}
+    let nc=n.children.map(go);
+    let changed=nc.some((c,i)=>c!==n.children[i]);
+    return changed?{...n,children:nc}:n;
+  }
+  G.tree=go(G.tree);
+  if(G.cu)G.cu=findNode(G.cu.id)||G.cu;
+  save();
+}
+
+function addChild(pid,newNode){
+  function go(n){
+    if(n.id==pid)return{...n,children:[...n.children,newNode]};
+    let nc=n.children.map(go);
+    return{...n,children:nc};
+  }
+  G.tree=go(G.tree);
+  if(G.cu)G.cu=findNode(G.cu.id)||G.cu;
+  save();
+}
+
+function getUpline(memberId){
+  let up=[],all=allNodes(),cur=all.find(n=>n.id==memberId);
+  while(cur&&up.length<4){
+    let p=all.find(n=>n.id==cur.parentId);
+    if(!p)break;
+    if(p.level>0)up.push(p);
+    cur=p;
+  }
+  return up;
+}
+
+// GLOBAL STATE — G object (mkNode now safely available)
+let G={
+  _id:1,
+  _adminUser:'',
+  _adminPass:'',
+  tree:mkNode(1,'ADMIN',0,null,'01700000000','0000000000000','',[]),
+  ag:{bkash:{name:'bKash',number:'01700000001'},nagad:{name:'Nagad',number:'01700000002'},rocket:{name:'Rocket',number:'01700000003'}},
+  txs:[],wds:[],ctxs:[],notices:[],tickets:[],msgs:[],rules:null,
+  cu:null,dm:'bkash',wm:'bkash',fpU:null,uTsel:null,aTsel:null,hMode:'d'
+};
+
+const nid=()=>++G._id;
+
+// FIRESTORE HELPERS
+function fsMain()  { return db.collection('rsm').doc(FS_DATA);  }
+
+function fsAdmin() { return db.collection('rsm').doc(FS_ADMIN); }
+
+function applySnap(s){
+  if(!s)return;
+  if(s.tree&&s.tree.id)G.tree=s.tree;
+  if(s.txs)G.txs=s.txs;
+  if(s.wds)G.wds=s.wds;
+  if(s.ctxs)G.ctxs=s.ctxs;
+  if(s.notices)G.notices=s.notices;
+  if(s.tickets)G.tickets=s.tickets;
+  if(s.msgs)G.msgs=s.msgs;
+  if(s.ag)G.ag=s.ag;
+  if(s.cr)CR=s.cr;
+  if(s.id&&s.id>G._id)G._id=s.id;
+  if(s.rules)G.rules=s.rules;
+}
+
+function save(){
+  fsMain().set({
+    tree:G.tree,txs:G.txs,wds:G.wds,ctxs:G.ctxs,
+    notices:G.notices||[],tickets:G.tickets||[],
+    msgs:G.msgs||[],ag:G.ag,cr:CR,id:G._id,
+    lang:L,rules:G.rules||null
+  }).catch(function(e){console.warn('Save error:',e);});
+}
+
+// REALTIME SYNC
+function startSync(){
+  if(_unsubscribe){_unsubscribe();_unsubscribe=null;}
+  _unsubscribe = fsMain().onSnapshot(function(snap){
+    if(!snap.exists)return;
+    var fb=snap.data();
+    var cuid=G.cu?G.cu.id:null;
+    applySnap(fb);
+    if(cuid!=null){
+      var u=findNode(cuid);
+      if(u){
+        G.cu=u;
+        try{
+          if(u.level===0){aHdr();}
+          else{
+            var hb=$('hBal');
+            if(hb)hb.textContent='৳'+(u.balance||0).toLocaleString();
+          }
+        }catch(e){}
+      }
+    }
+  },function(err){console.warn('Sync error:',err);});
+}
+
+// ADMIN SECRET CODE — শুধু এই কোড জানলে প্রথম রেজিস্ট্রেশনে Admin হওয়া যাবে
+const ADMIN_SECRET = 'RSM2024';
+
+// LOAD
+function load(){
+  var sp=$('splash');
+  function hideSplash(){
+    if(!sp)return;
+    sp.style.transition='opacity 0.4s';
+    sp.style.opacity='0';
+    sp.style.pointerEvents='none';
+    setTimeout(function(){sp.style.display='none';},450);
+  }
+
+  Promise.all([
+    fsMain().get(),
+    fsAdmin().get()
+  ]).then(function(results){
+    var mainDoc  = results[0];
+    var adminDoc = results[1];
+    hideSplash();
+
+    // Admin credentials
+    if(adminDoc.exists && adminDoc.data().username){
+      G._adminUser = adminDoc.data().username;
+      G._adminPass = adminDoc.data().password;
+    } else {
+      // Firebase-এ admin cfg নেই — load() এর সময় কিছু করার নেই
+      // প্রথম রেজিস্ট্রেশনেই admin তৈরি হবে
+    }
+
+    if(mainDoc.exists && mainDoc.data().tree && mainDoc.data().tree.id){
+      applySnap(mainDoc.data());
+      // Session থেকে login check
+      var cuid=null;
+      try{var cs=sessionStorage.getItem('rsm_cu');if(cs)cuid=parseInt(cs);}catch(e){}
+      if(cuid!=null){
+        var u=findNode(cuid);
+        if(u){
+          G.cu=u;startSync();
+          if(u.level===0){show('s-admin');renderMembers();aHdr();}
+          else{show('s-app');renderProfile();}
+          return;
+        }
+      }
+    } else {
+      // প্রথমবার: Admin tree node তৈরি করো
+      G.tree=mkNode(1,'ADMIN',0,null,'01700000000','0000000000000',G._adminPass,[]);
+      save();
+    }
+    startSync();
+    show('s-login');
+  }).catch(function(e){
+    console.warn('Load error:',e);
+    hideSplash();
+    startSync();
+    show('s-login');
+  });
+  return false;
+}
+
+// LOGIN / LOGOUT
+function doLogin(){
+  var id=$('li').value.trim();
+  var pw=$('lp').value.trim();
+  if(!id||!pw){msg('lMsg',L==='bn'?'❌ সব তথ্য দিন':'❌ Fill all fields','er');return;}
+  var btn=$('lBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳...';}
+  function rb(){if(btn){btn.disabled=false;btn.textContent=t('loginBtn');}}
+
+  function chk(adminUser,adminPass){
+    var f=null;
+    if(adminUser&&adminPass&&(id===adminUser||id==='admin')&&pw===adminPass){
+      f=allNodes().find(function(n){return n.level===0;})||G.tree;
+      if(!f||!f.id){
+        G.tree=mkNode(1,'ADMIN',0,null,'01700000000','0000000000000',adminPass,[]);
+        f=G.tree;
+      }
+    } else {
+      f=allNodes().find(function(n){
+        if(n.level===0)return false;
+        return((n.referralCode&&n.referralCode===id.toUpperCase())||
+               (n.phone&&n.phone===id)||
+               (n.name&&n.name.toUpperCase()===id.toUpperCase()))
+               &&n.password===pw;
+      });
+    }
+    rb();
+    if(!f){msg('lMsg',L==='bn'?'❌ সঠিক ID বা পাসওয়ার্ড':'❌ Wrong ID or password','er');return;}
+    G.cu=f;
+    try{sessionStorage.setItem('rsm_cu',String(f.id));}catch(e){}
+    $('li').value='';
+    $('lp').value='';
+    if(f.level===0){show('s-admin');renderMembers();aHdr();}
+    else{show('s-app');renderProfile();}
+  }
+
+  Promise.all([
+    fsMain().get(),
+    fsAdmin().get()
+  ]).then(function(results){
+    var mainDoc  = results[0];
+    var adminDoc = results[1];
+    // Firestore data apply
+    if(mainDoc.exists && mainDoc.data().tree && mainDoc.data().tree.id){
+      applySnap(mainDoc.data());
+    }
+    // Admin credentials — Firestore সবার আগে, না থাকলে DEFAULT
+    var au, ap;
+    if(adminDoc.exists && adminDoc.data().username){
+      au = adminDoc.data().username;
+      ap = adminDoc.data().password;
+    } else {
+      // Admin এখনো তৈরি হয়নি
+      rb();
+      msg('lMsg',L==='bn'?'❌ Admin এখনো তৈরি হয়নি। প্রথমে রেজিস্ট্রেশন করুন':'❌ No admin yet. Please register first','er');
+      return;
+    }
+    G._adminUser = au;
+    G._adminPass = ap;
+    chk(au, ap);
+  }).catch(function(e){
+    console.warn('Login error:',e);
+    var au = G._adminUser || '';
+    var ap = G._adminPass || '';
+    chk(au, ap);
+  });
+}
+
+function doLogout(){
+  G.cu=null;
+  try{sessionStorage.removeItem('rsm_cu');}catch(e){}
+  if(_unsubscribe){_unsubscribe();_unsubscribe=null;}
+  show('s-login');
+}
+
+function saveAdminCreds(){
+  var un=$('adm-un').value.trim();
+  var pw=$('adm-pw').value.trim();
+  if(!un){flash('aFlash',L==='bn'?'❌ Username দিন':'❌ Enter username','er');return;}
+  if(pw && pw.length<6){flash('aFlash',L==='bn'?'❌ Password কমপক্ষে ৬ অক্ষর':'❌ Password min 6 chars','er');return;}
+  var newCfg={username:un, password:pw||G._adminPass};
+  fsAdmin().set(newCfg).then(function(){
+    G._adminUser=newCfg.username;
+    G._adminPass=newCfg.password;
+    updNode(1,function(n){return Object.assign({},n,{password:newCfg.password});});
+    $('adm-pw').value='';
+    flash('aFlash',L==='bn'?'✅ Credentials Firestore-এ সেভ হয়েছে!':'✅ Credentials saved in Firestore!','ok');
+  }).catch(function(e){
+    flash('aFlash','❌ Save error: '+e.message,'er');
+  });
+}
+
+// LANGUAGE SWITCH
+function sL(lang){
+  L=lang;
+  document.querySelectorAll('.lbtn').forEach(b=>{
+    let txt=b.textContent.trim();
+    b.classList.toggle('on',(lang==='en'&&(txt==='English'||txt==='EN'))||(lang==='bn'&&(txt==='বাংলা'||txt==='বাং')));
+  });
+  Object.entries(TI).forEach(([id,key])=>{let el=document.getElementById(id);if(el)el.innerHTML=t(key);});
+  let rl=$('rememberLbl');if(rl)rl.textContent=lang==='bn'?'মনে রাখুন':'Remember Me';
+  // FIX: English-এ "Withdraw" দেখাবে
+  let utw=$('uTW');if(utw)utw.textContent=lang==='bn'?'উত্তোলন':'Withdraw';
+  save();
+  if(G.cu){if(G.cu.level===0){aHdr();renderMembers();}else renderProfile();}
+}
+
+// UI HELPERS
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.style.display='none';s.classList.remove('active');});
+  let el=document.getElementById(id);
+  if(el){el.style.display='block';el.classList.add('active');window.scrollTo(0,0);}
+  if(id==='s-reg'&&typeof checkAdminFieldVisibility==='function')checkAdminFieldVisibility();
+  Object.entries(TI).forEach(([eid,key])=>{let el=document.getElementById(eid);if(el)el.innerHTML=t(key);});
+  document.querySelectorAll('.lbtn').forEach(b=>{
+    let txt=b.textContent.trim();
+    b.classList.toggle('on',(L==='en'&&(txt==='English'||txt==='EN'))||(L==='bn'&&(txt==='বাংলা'||txt==='বাং')));
+  });
+}
+
+function msg(id,txt,tp){
+  let el=document.getElementById(id);if(!el)return;
+  if(!txt){el.style.display='none';return;}
+  el.className='msg '+tp;el.style.display='block';el.innerHTML=txt;
+  setTimeout(()=>{if(el)el.style.display='none';},3500);
+}
+
+function flash(id,txt,tp){
+  let el=document.getElementById(id);if(!el)return;
+  el.innerHTML=`<div class="msg ${tp}" style="display:block;margin-bottom:9px">${txt}</div>`;
+  setTimeout(()=>{if(el)el.innerHTML='';},3000);
+}
+
+function tp(id,btn){
+  let i=document.getElementById(id);
+  i.type=i.type==='password'?'text':'password';
+  btn.textContent=i.type==='password'?'👁️':'🙈';
+}
+
+function avEl(node,sz){
+  let c=COL[Math.min(node.level,7)],initial=(node.name||'?')[0];
+  if(node.avatar){
+    return`<div class="av" style="width:${sz}px;height:${sz}px;border:2px solid ${c}55"><img src="${node.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`;
+  }
+  return`<div class="av" style="width:${sz}px;height:${sz}px;background:linear-gradient(135deg,${c},${c}99);border:2px solid ${c}55;font-size:${Math.round(sz*.38)}px">${initial}</div>`;
+}
+
+function hexToRgb(hex){
+  try{let r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`${r},${g},${b}`;}
+  catch(e){return'99,102,241';}
+}
+
+// SIDEBAR & TABS
+function openSB(type){
+  document.getElementById(type+'SB').classList.add('open');
+  document.getElementById(type+'Ovl').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeSB(type){
+  document.getElementById(type+'SB').classList.remove('open');
+  document.getElementById(type+'Ovl').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// TAB NAVIGATION  (uTab) — সঠিক HTML structure অনুযায়ী
+function uTab(id) {
+  // সব tab content লুকাই
+  document.querySelectorAll('#s-app .tc').forEach(function (x) {
+    x.classList.remove('on');
+  });
+  // নির্বাচিত tab দেখাই
+  let el = document.getElementById('tc-' + id);
+  if (el) el.classList.add('on');
+
+  // Sidebar items highlight
+  document.querySelectorAll('.sb-item[id^="sbi-"]').forEach(function (b) {
+    b.classList.remove('on');
+  });
+  let si = document.getElementById('sbi-' + id);
+  if (si) si.classList.add('on');
+
+  // Bottom nav highlight
+  ['profile', 'dep', 'tree'].forEach(function (k) {
+    let b = document.getElementById('bn-' + k);
+    if (b) b.classList.toggle('on', k === id);
+  });
+
+  // প্রতিটি tab-এর নিজস্ব render call
+  if (id === 'comm')    renderComm();
+  if (id === 'hist')    hTab(G.hMode, document.getElementById('hBt' + G.hMode.toUpperCase()));
+  if (id === 'tree')    renderUserTree();
+  if (id === 'profile') { updateUI(); renderAgAcc(); }
+  if (id === 'wd') {
+    let u = findNode(G.cu.id);
+    let wb = $('wBal');
+    if (wb) wb.textContent = '৳' + ((u && u.balance) || 0).toLocaleString();
+  }
+}
+
+function aTab(id){
+  document.querySelectorAll('#s-admin .tc').forEach(x=>x.classList.remove('on'));
+  let el=document.getElementById('atc-'+id);if(el)el.classList.add('on');
+  document.querySelectorAll('.sb-item[id^="asbi-"]').forEach(b=>b.classList.remove('on'));
+  let si=document.getElementById('asbi-'+id);if(si)si.classList.add('on');
+  if(id==='users')renderMembers();
+  if(id==='deps')renderDeps();
+  if(id==='wds')renderWds();
+  if(id==='agnts')renderAgnts();
+  if(id==='comm')renderCommEdit();
+  if(id==='atree')renderAdminTree();
+  if(id==='sets')renderSets();
+}
+
+function sMth(m,btn,type){
+  if(type==='dep'){G.dm=m;document.querySelectorAll('#tc-dep .mb').forEach(b=>b.classList.remove('on'));}
+  else{G.wm=m;document.querySelectorAll('#tc-wd .mb').forEach(b=>b.classList.remove('on'));}
+  btn.classList.add('on');
+}
+
+// FORGOT PASSWORD
+function fpVerify(){
+  let ph=$('fpph').value.trim(),ni=$('fpni').value.trim();
+  let f=allNodes().find(n=>n.phone===ph&&n.nid===ni);
+  if(!f){msg('fpMsg',L==='bn'?'❌ মোবাইল বা NID মিলছে না':'❌ Mobile or NID not found','er');return;}
+  G.fpU=f;
+  $('fps1').style.display='none';
+  $('fps2').style.display='block';
+  $('fpUser').innerHTML=`✅ ${f.name} — 📱 ${f.phone}`;
+}
+
+// PART 2 — User: Registration, Profile, Deposit, Withdraw, History, Tree
+
+function fpReset(){
+  let np=$('fpnp').value.trim(),cp=$('fpcp').value.trim();
+  if(!np||np.length<6){msg('fpMsg',L==='bn'?'❌ কমপক্ষে ৬ অক্ষর':'❌ Min 6 characters','er');return;}
+  if(np!==cp){msg('fpMsg',L==='bn'?'❌ পাসওয়ার্ড মিলছে না':'❌ Passwords do not match','er');return;}
+  updNode(G.fpU.id,n=>({...n,password:np}));
+  msg('fpMsg','✅ Password changed!','ok');
+  setTimeout(()=>{
+    $('fps1').style.display='block';
+    $('fps2').style.display='none';
+    G.fpU=null;show('s-login');
+  },1800);
+}
+
+// REGISTRATION
+function chkRf(){
+  let v=$('rrf').value.trim().toUpperCase();
+  $('rrf').value=v;
+  let b=$('rgBanner');
+  if(!v){
+    b.style.cssText='background:rgba(245,158,11,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(245,158,11,.2);font-size:11px;color:#FCD34D';
+    b.innerHTML='ℹ️ <span id="rgBannerTxt">'+t('noRefMsg')+'</span>';return;
+  }
+  let f=allNodes().find(n=>n.referralCode===v);
+  if(f){
+    let cnt=f.children.length;
+    if(cnt>=MXR){
+      b.style.cssText='background:rgba(239,68,68,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(239,68,68,.2);font-size:11px;color:#F87171';
+      b.innerHTML=`❌ ${f.name} — Slots full (${MXR}/${MXR})`;
+    } else {
+      b.style.cssText='background:rgba(16,185,129,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(16,185,129,.2);font-size:11px;color:#34D399';
+      b.innerHTML=`✅ Referrer: <b>${f.name}</b> → Level ${f.level+1} (${cnt}/${MXR} used)`;
+    }
+  } else {
+    b.style.cssText='background:rgba(239,68,68,.08);border-radius:10px;padding:9px 13px;margin-bottom:12px;border:1px solid rgba(239,68,68,.2);font-size:11px;color:#F87171';
+    b.innerHTML='❌ Invalid referral code';
+  }
+}
+
+function doReg(){
+  const E=L==='bn';
+  let name    = $('rn').value.trim();
+  let phone   = $('rph').value.trim().replace(/\D/g,'');
+  let nid_val = $('rni').value.trim().replace(/\D/g,'');
+  let refCode = $('rrf').value.trim().toUpperCase();
+  let pw      = $('rpw').value.trim();
+  let cp      = $('rcp').value.trim();
+  let admCode = ($('radmcode') ? $('radmcode').value.trim() : '');
+
+  // ── Validation ──
+  if(!name||!phone||!nid_val||!pw){msg('rgMsg',E?'❌ সব তথ্য পূরণ করুন':'❌ Fill all fields','er');return;}
+  if(!/^01[3-9]\d{8}$/.test(phone)){msg('rgMsg',E?'❌ সঠিক মোবাইল নম্বর দিন (01X-XXXXXXXX)':'❌ Enter valid BD mobile (01X-XXXXXXXX)','er');return;}
+  if(nid_val.length!==10&&nid_val.length!==17){msg('rgMsg',E?'❌ NID ১০ বা ১৭ সংখ্যার হতে হবে':'❌ NID must be 10 or 17 digits','er');return;}
+  if(/^(.)\1+$/.test(nid_val)){msg('rgMsg',E?'❌ সঠিক NID নম্বর দিন':'❌ Enter a valid NID number','er');return;}
+  if(pw.length<6){msg('rgMsg',E?'❌ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর':'❌ Password min 6 chars','er');return;}
+  if(pw!==cp){msg('rgMsg',E?'❌ পাসওয়ার্ড মিলছে না':'❌ Passwords do not match','er');return;}
+
+  // ── Duplicate check ──
+  let all=allNodes();
+  if(all.find(x=>x.phone===phone)){msg('rgMsg',E?'❌ এই মোবাইলে অ্যাকাউন্ট আছে':'❌ Mobile already registered','er');return;}
+  if(all.find(x=>x.nid===nid_val)){msg('rgMsg',E?'❌ এই NID-তে অ্যাকাউন্ট আছে':'❌ NID already registered','er');return;}
+
+  // ── Admin check ──
+  // Admin তৈরি হয়নি AND secret code সঠিক → এই ইউজার Admin হবে
+  let adminExists = allNodes().some(function(n){ return n.level===0 && n.id!==1; });
+  let isAdmin = (!adminExists && admCode === ADMIN_SECRET);
+
+  if(isAdmin){
+    // Admin node তৈরি
+    let adminNode = mkNode(1, name, 0, null, phone, nid_val, pw, []);
+    adminNode.referralCode = mkCode(name, 1);
+    adminNode.avatar       = null;
+    adminNode.balance      = 0;
+    adminNode.deposit      = 0;
+    adminNode.joinedAt     = Date.now();
+    G.tree = adminNode;
+    // Firebase-এ admin credentials save
+    fsAdmin().set({username: phone, password: pw})
+      .catch(function(e){ console.warn('Admin cfg save:', e); });
+    G._adminUser = phone;
+    G._adminPass = pw;
+    save();
+    G.cu = G.tree;
+    try{sessionStorage.setItem('rsm_cu','1');}catch(e){}
+    show('s-admin');
+    renderMembers();
+    aHdr();
+    flash('aFlash', E?'🎉 আপনি সফলভাবে Admin হিসেবে তৈরি হয়েছেন!':'🎉 You are now the Admin!','ok');
+    return;
+  }
+
+  // Wrong secret code দিলে warn করো
+  if(admCode && admCode !== ADMIN_SECRET){
+    msg('rgMsg', E?'❌ Admin Code সঠিক নয়':'❌ Wrong admin code','er');
+    return;
+  }
+
+  // ── Normal user registration ──
+  // Admin না থাকলে সাধারণ রেজিস্ট্রেশন বন্ধ
+  if(!adminExists && !G.tree.id){
+    msg('rgMsg', E?'❌ আগে Admin রেজিস্ট্রেশন করতে হবে':'❌ Admin must register first','er');
+    return;
+  }
+
+  // Referral check
+  let parentId = 1;
+  if(refCode){
+    let ref = all.find(x=>x.referralCode===refCode && x.level>0);
+    if(!ref){msg('rgMsg',E?'❌ রেফার কোড সঠিক নয়':'❌ Invalid referral code','er');return;}
+    if(ref.level>=7){msg('rgMsg',E?'❌ সর্বোচ্চ লেভেলে রেফার সম্ভব নয়':'❌ Max level reached','er');return;}
+    let liveRef=findNode(ref.id);
+    if(!liveRef||liveRef.children.length>=MXR){msg('rgMsg',E?'❌ স্লট পূর্ণ — '+ref.name+' এর সর্বোচ্চ '+MXR+' জন সদস্য আছে':'❌ Slots full — '+ref.name+' already has '+MXR+' referrals','er');return;}
+    parentId=ref.id;
+  }
+
+  let parNode=findNode(parentId);
+  if(!parNode){msg('rgMsg','❌ Parent not found','er');return;}
+
+  let newId=nid();
+  let newMember={
+    id:newId, name:name, level:parNode.level+1, parentId:parentId,
+    referralCode:mkCode(name,newId), phone:phone, nid:nid_val,
+    password:pw, avatar:null, balance:0, deposit:DEP, children:[],
+    joinedAt:Date.now()
+  };
+
+  function insertChild(node){
+    if(node.id===parentId){
+      if(node.children.length>=MXR){return false;}
+      node.children.push(newMember); return true;
+    }
+    for(let ch of node.children){if(insertChild(ch))return true;}
+    return false;
+  }
+  if(!insertChild(G.tree)){msg('rgMsg',E?'❌ স্লট পূর্ণ, রেজিস্ট্রেশন সম্ভব নয়':'❌ Slots full, registration failed','er');return;}
+  save();
+  G.cu=findNode(newId);
+  try{sessionStorage.setItem('rsm_cu',String(newId));}catch(e){}
+  show('s-app');
+  renderProfile();
+}
+
+// AVATAR UPLOAD
+function upAv(e){
+  let file=e.target.files[0];if(!file)return;
+  const E=L==='bn';
+  // Validate type
+  if(!file.type.startsWith('image/')){flash('uFlash',E?'❌ শুধুমাত্র ছবি ফাইল আপলোড করুন':'❌ Only image files allowed','er');return;}
+  // Size limit 200KB for Firestore compatibility
+  if(file.size>204800){flash('uFlash',E?'❌ ছবি সর্বোচ্চ ২০০KB হতে হবে (Firestore সীমাবদ্ধতা)':'❌ Image must be under 200KB (Firestore limit)','er');return;}
+  let r=new FileReader();
+  r.onload=ev=>{
+    // Compress via canvas before storing in Firestore
+    let img=new Image();
+    img.onload=function(){
+      let cv=document.createElement('canvas');
+      let maxSz=120;
+      let scale=Math.min(maxSz/img.width,maxSz/img.height,1);
+      cv.width=img.width*scale;cv.height=img.height*scale;
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      let b64=cv.toDataURL('image/jpeg',0.7);
+      updNode(G.cu.id,n=>({...n,avatar:b64}));
+      G.cu=findNode(G.cu.id);
+      renderProfile();
+      flash('uFlash',E?'✅ ছবি আপলোড হয়েছে!':'✅ Photo uploaded!','ok');
+    };
+    img.src=ev.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+// COPY / SHARE
+function copyCode(){
+  let code=$('pRefCode').textContent;
+  if(navigator.clipboard)navigator.clipboard.writeText(code).then(()=>flash('uFlash',L==='bn'?'✅ কোড কপি হয়েছে!':'✅ Code copied!','ok'));
+  else flash('uFlash','Code: '+code,'ok');
+}
+
+function cpNum(num){
+  if(navigator.clipboard)navigator.clipboard.writeText(num).then(()=>flash('uFlash',L==='bn'?'✅ নম্বর কপি!':'✅ Copied!','ok'));
+  else flash('uFlash','Number: '+num,'ok');
+}
+
+// RENDER PROFILE
+function renderProfile(){
+  let u=findNode(G.cu.id)||G.cu;G.cu=u;
+  let c=COL[Math.min(u.level,7)],bal=u.balance||0;
+  // Sidebar
+  let sbA=$('sbAv');
+  if(sbA){sbA.style.background=u.avatar?'transparent':`linear-gradient(135deg,${c},${c}99)`;sbA.innerHTML=u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:(u.name||'?')[0];}
+  let sbN=$('sbName');if(sbN)sbN.textContent=u.name;
+  let sbC=$('sbCode');if(sbC)sbC.textContent=u.referralCode+' · Lv'+u.level;
+  let sbB=$('sbBal');if(sbB)sbB.textContent='৳'+bal.toLocaleString();
+  // Header
+  let ha=$('hAv');
+  if(ha){ha.style.background=u.avatar?'transparent':`linear-gradient(135deg,${c},${c}99)`;ha.innerHTML=u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:(u.name||'?')[0];}
+  let hn=$('hName');if(hn)hn.textContent=u.name;
+  let hc=$('hCode');if(hc)hc.textContent=u.referralCode+' · Lv'+u.level;
+  let hb=$('hBal');if(hb)hb.textContent='৳'+bal.toLocaleString();
+  // Profile card
+  let pa=$('pAv');
+  if(pa){pa.style.background=u.avatar?'transparent':`linear-gradient(135deg,${c},${c}99)`;pa.innerHTML=u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:(u.name||'?')[0];}
+  let pn=$('pName');if(pn)pn.textContent=u.name;
+  let ps=$('pSub');if(ps)ps.textContent=`#${u.id} · ${t('levelLbl')} ${u.level} (${LBL[u.level]||u.level})`;
+  let pb=$('pBadge');if(pb)pb.textContent=`🏅 ${LBL[u.level]||'Level '+u.level} ${t('rankLbl')}`;
+  let pbal=$('pBal');if(pbal)pbal.textContent='৳'+bal.toLocaleString();
+  let pbs=$('pBalSub');if(pbs)pbs.textContent=t('balLbl')+': ৳'+bal.toLocaleString();
+  let pbl=$('pBalL');if(pbl)pbl.innerHTML=t('totBalLbl');
+  let rc=$('pRefCode');if(rc)rc.textContent=u.referralCode;
+  let rs=$('pSlots');if(rs)rs.textContent=t('slotsLbl')+': '+u.children.length+'/'+MXR;
+  let rl=$('pRefL');if(rl)rl.innerHTML=t('refCodeTitle');
+  let ts=flat(u).length-1;
+  let ps2=$('pStats');
+  if(ps2)ps2.innerHTML=[
+    {l:t('teamSizeLbl'),v:ts,i:'🌐',c:'#FBBF24'},
+    {l:t('refLbl')+` (${u.children.length}/${MXR})`,v:u.children.length,i:'👥',c:'#F472B6'},
+    {l:t('levelLbl'),v:LBL[u.level]||u.level,i:'🏅',c:'#A78BFA'},
+    {l:t('balLbl'),v:'৳'+bal.toLocaleString(),i:'💰',c:'#10B981'},
+  ].map(s=>`<div class="stat"><div style="font-size:15px;margin-bottom:3px">${s.i}</div><div class="sv" style="color:${s.c}">${s.v}</div><div class="sl">${s.l}</div></div>`).join('');
+  let pi=$('pInfo');
+  if(pi)pi.innerHTML=[
+    {i:'📱',l:t('mobileLbl').replace(' *',''),v:u.phone||'—'},
+    {i:'🪪',l:'NID',v:u.nid?u.nid.slice(0,4)+'●●●'+u.nid.slice(-2):'—'},
+    {i:'🆔',l:t('idLbl'),v:'#'+u.id},
+    {i:'📊',l:t('levelLbl'),v:u.level+' ('+LBL[u.level]+')'},
+    {i:'🔑',l:'Referral Code',v:u.referralCode},
+  ].map((r,i,a)=>`<div class="row" style="padding:8px 12px;${i===a.length-1?'border-bottom:none':''}"><span style="font-size:13px;margin-right:8px">${r.i}</span><span style="flex:1;font-size:11px;color:#64748B">${r.l}</span><span style="font-size:11px;color:#CBD5E1;font-weight:600;font-family:${r.l==='Referral Code'?'monospace':'inherit'}">${r.v}</span></div>`).join('');
+  renderAgAcc();
+  let wb=$('wBal');if(wb)wb.textContent='৳'+bal.toLocaleString();
+}
+
+// AGENT NUMBERS
+function renderAgAcc(){
+  const cl={bkash:'#E2136E',nagad:'#F26522',rocket:'#8B5CF6'};
+  let el=$('agAcc');if(!el)return;
+  el.innerHTML=Object.entries(G.ag).map(([k,ag])=>`
+<div class="acd" id="ac-${k}" onclick="togAg('${k}')">
+<div class="ahdr">
+<div style="display:flex;align-items:center;gap:9px">
+<div style="width:34px;height:34px;border-radius:8px;background:${cl[k]}22;border:1.5px solid ${cl[k]}44;display:flex;align-items:center;justify-content:center;font-size:17px">${ICO[k]}</div>
+<div><div style="font-size:12px;font-weight:700;color:#E2E8F0">${ag.name}</div><div style="font-size:9px;color:#64748B">${L==='bn'?'ক্লিক করুন নম্বর দেখতে':'Tap to reveal number'}</div></div></div>
+<span id="ar-${k}" style="font-size:15px;color:#374151">⌄</span></div>
+<div class="abdy" id="ab-${k}">
+<div style="display:flex;align-items:center;justify-content:space-between;background:${cl[k]}12;border-radius:8px;padding:10px 12px;border:1px solid ${cl[k]}33">
+<span style="font-size:17px;font-weight:700;color:${cl[k]};letter-spacing:2px;font-family:monospace">${ag.number}</span>
+<button onclick="event.stopPropagation();cpNum('${ag.number}')" style="background:${cl[k]}25;border:1px solid ${cl[k]}55;color:${cl[k]};border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">${t('copyBtn')}</button></div>
+<div style="font-size:9px;color:#475569;margin-top:6px">⚠️ ${L==='bn'?'এই নম্বরে টাকা পাঠিয়ে TX আইডি সাবমিট করুন':'Send money here then submit TX ID'}</div></div></div>`).join('');
+}
+
+function togAg(k){
+  const cl={bkash:'#E2136E',nagad:'#F26522',rocket:'#8B5CF6'};
+  let isOpen=document.getElementById('ab-'+k).style.display==='block';
+  ['bkash','nagad','rocket'].forEach(key=>{
+    let b=document.getElementById('ab-'+key),a=document.getElementById('ar-'+key),c=document.getElementById('ac-'+key);
+    if(b)b.style.display='none';if(a){a.style.transform='';a.style.color='#374151';}if(c)c.style.borderColor='rgba(255,255,255,.07)';
+  });
+  if(!isOpen){
+    document.getElementById('ab-'+k).style.display='block';
+    document.getElementById('ar-'+k).style.transform='rotate(180deg)';
+    document.getElementById('ar-'+k).style.color=cl[k];
+    document.getElementById('ac-'+k).style.borderColor=cl[k]+'55';
+  }
+}
+
+// DEPOSIT
+function subDep(){
+  let tx=$('dTx').value.trim();
+  let ph=$('dMob').value.trim().replace(/\D/g,'');
+  let amt=parseFloat($('dAmt').value)||0;
+  const E=L==='bn';
+  // TX ID: must not be empty, min 6 chars, alphanumeric
+  if(!tx||tx.length<6){msg('dMsg',E?'❌ সঠিক TX আইডি দিন (কমপক্ষে ৬ অক্ষর)':'❌ Enter valid TX ID (min 6 chars)','er');return;}
+  // Phone validation
+  if(!/^01[3-9]\d{8}$/.test(ph)){msg('dMsg',E?'❌ সঠিক মোবাইল নম্বর দিন':'❌ Enter valid mobile number','er');return;}
+  // Amount must be at least DEP
+  if(amt<DEP){msg('dMsg',E?`❌ সর্বনিম্ন ডিপোজিট ৳${DEP.toLocaleString()}`:`❌ Minimum deposit ৳${DEP.toLocaleString()}`,'er');return;}
+  // Duplicate TX ID check across all transactions
+  if(G.txs.find(x=>x.txId.toLowerCase()===tx.toLowerCase())){msg('dMsg',E?'❌ এই TX আইডি আগেই ব্যবহৃত হয়েছে':'❌ TX ID already used','er');return;}
+  // Pending deposit check — user cannot have 2 pending at once
+  if(G.txs.find(x=>x.memberId===G.cu.id&&x.status==='pending')){msg('dMsg',E?'❌ আপনার একটি ডিপোজিট এখনো যাচাই হয়নি':'❌ You already have a pending deposit','er');return;}
+  G.txs.push({
+    id:nid(),txId:tx,memberId:G.cu.id,memberName:G.cu.name,
+    method:G.dm,senderPhone:ph,amount:amt,
+    date:new Date().toLocaleDateString('bn-BD'),
+    submittedAt:Date.now(),status:'pending'
+  });
+  save();
+  msg('dMsg',E?'✅ সাবমিট হয়েছে! অ্যাডমিন ভেরিফাই করলে কমিশন বিতরণ হবে।':'✅ Submitted! Commission distributed after admin verification.','ok');
+  $('dTx').value='';$('dMob').value='';$('dAmt').value='5000';
+}
+
+// WITHDRAWAL
+function subWd(){
+  let u=findNode(G.cu.id),amt=parseFloat($('wAmt').value)||0;
+  let num=$('wAcc').value.trim(),pin=$('wPin').value.trim();
+  const E=L==='bn';
+  if(amt<MIN_WD){msg('wMsg',E?`❌ সর্বনিম্ন উত্তোলন ৳${MIN_WD.toLocaleString()}`:`❌ Min withdrawal ৳${MIN_WD.toLocaleString()}`,'er');return;}
+  if(amt>(u.balance||0)){msg('wMsg',E?'❌ পর্যাপ্ত ব্যালেন্স নেই':'❌ Insufficient balance','er');return;}
+  if(!num||num.length<11){msg('wMsg',E?'❌ মোবাইল নম্বর দিন':'❌ Enter mobile number','er');return;}
+  if(!pin){msg('wMsg',E?'❌ পাসওয়ার্ড দিন':'❌ Enter password','er');return;}
+  if(pin!==u.password){msg('wMsg',E?'❌ পাসওয়ার্ড সঠিক নয়':'❌ Incorrect password','er');return;}
+  updNode(G.cu.id,n=>({...n,balance:(n.balance||0)-amt}));
+  G.wds.push({id:nid(),memberId:G.cu.id,memberName:G.cu.name,method:G.wm,phone:num,amount:amt,date:new Date().toLocaleDateString(),status:'pending'});
+  save();
+  let nb=findNode(G.cu.id)?.balance||0;
+  ['wBal','hBal'].forEach(id=>{let el=document.getElementById(id);if(el)el.textContent='৳'+nb.toLocaleString();});
+  $('pBal').textContent='৳'+nb.toLocaleString();
+  msg('wMsg',E?'✅ রিকোয়েস্ট সাবমিট! অ্যাডমিন পেমেন্ট করলে নোটিফিকেশন পাবেন।':'✅ Submitted! You will be notified when admin processes payment.','ok');
+  $('wAmt').value='';$('wAcc').value='';$('wPin').value='';
+  renderWdHist();aHdr();
+}
+
+function wdCard(w){
+  let s=w.status,ok=s==='success',rj=s==='rejected';
+  return`<div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:7px;border:1px solid ${ok?'rgba(16,185,129,.15)':rj?'rgba(239,68,68,.15)':'rgba(245,158,11,.15)'}">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;align-items:center;gap:6px"><span>${ICO[w.method]||'💳'}</span>
+<div><div style="font-size:11px;font-weight:700;color:#E2E8F0">${G.ag[w.method]?.name} — ${w.phone}</div><div style="font-size:9px;color:#475569">${w.date}</div></div></div>
+<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:#F59E0B">৳${w.amount.toLocaleString()}</div>
+<span class="bdg ${ok?'bok':rj?'brj':'bpn'}">${t(ok?'success':rj?'rejected':'pending')}</span></div></div>
+${ok?`<div style="font-size:10px;color:#34D399;margin-top:5px;font-weight:700">🔔 Your withdrawal of ৳${w.amount.toLocaleString()} TK is successful!</div>`:''}
+</div>`;
+}
+
+function renderWdHist(){
+  let el=$('wHist');if(!el)return;
+  let uw=G.wds.filter(x=>x.memberId==G.cu.id);
+  el.innerHTML=uw.length?uw.slice().reverse().map(w=>wdCard(w)).join(''):`<div style="text-align:center;color:#374151;font-size:12px;padding:18px 0">${t('noWdTxt')}</div>`;
+}
+
+// COMMISSION
+function renderComm(){
+  let u=findNode(G.cu.id),bal=u.balance||0,ts=flat(u).length-1;
+  let ct=$('cTot');if(ct)ct.textContent='৳'+bal.toLocaleString();
+  let cs=$('cSub');if(cs)cs.textContent=ts+' '+(L==='bn'?'সদস্যের নেটওয়ার্কে':'members in network');
+  const cls=["#10B981","#3B82F6","#EC4899","#8B5CF6"];
+  const lbls=L==='bn'?["১ম (B)","২য় (C)","৩য় (D)","৪র্থ (E)"]:["Level 1 (B)","Level 2 (C)","Level 3 (D)","Level 4 (E)"];
+  let br=[0,0,0,0];
+  G.ctxs.filter(x=>x.upId==u.id).forEach(x=>{if(x.depth>=1&&x.depth<=4)br[x.depth-1]+=x.amount;});
+  let cb=$('cBrk');
+  if(cb)cb.innerHTML=lbls.map((lbl,i)=>`
+<div style="display:flex;align-items:center;padding:10px 12px;border-bottom:${i<3?'1px solid rgba(255,255,255,.04)':'none'}">
+<div style="width:22px;height:22px;border-radius:6px;background:${cls[i]}22;border:1px solid ${cls[i]}44;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${cls[i]};margin-right:8px">${i+1}</div>
+<div style="flex:1"><div style="font-size:11px;color:#CBD5E1;font-weight:700">${lbl}</div><div style="font-size:9px;color:#475569">${(CR[i]*100).toFixed(1)}% per = ৳${(DEP*CR[i]).toLocaleString()}</div></div>
+<div style="color:${cls[i]};font-weight:700;font-size:12px">৳${br[i].toLocaleString()}</div></div>`).join('');
+  const cnts=[4,16,64,256];
+  let cc=$('cChart');
+  if(cc)cc.innerHTML=`<div style="display:grid;grid-template-columns:1.3fr .7fr .5fr .8fr;gap:3px 6px;font-size:9px;margin-bottom:6px;color:#475569;font-weight:700"><div>Level</div><div>Members</div><div>%</div><div>Total</div></div>`+
+    cnts.map((cnt,i)=>`<div style="display:grid;grid-template-columns:1.3fr .7fr .5fr .8fr;gap:3px 6px;font-size:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="color:${cls[i]};font-weight:700">${['B','C','D','E'][i]}</div><div style="color:#94A3B8">${cnt}</div><div style="color:${cls[i]};font-weight:700">${(CR[i]*100).toFixed(1)}%</div><div style="color:${cls[i]};font-weight:700">৳${(cnt*DEP*CR[i]).toLocaleString()}</div></div>`).join('')+
+    `<div style="display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid rgba(255,255,255,.1);margin-top:4px"><span style="font-size:11px;color:#FCD34D;font-weight:700">Total (340)</span><span style="font-size:11px;color:#FCD34D;font-weight:700">৳${cnts.reduce((s,c,i)=>s+c*DEP*CR[i],0).toLocaleString()}</span></div>`;
+}
+
+// HISTORY
+function hTab(mode,btn){
+  G.hMode=mode;
+  ['d','c','w'].forEach(m=>{let b=document.getElementById('hBt'+m.toUpperCase());if(b){b.style.background='rgba(255,255,255,.05)';b.style.color='#475569';}});
+  if(btn){btn.style.background='linear-gradient(135deg,#6366F1,#8B5CF6)';btn.style.color='#fff';}
+  let el=$('hList');if(!el)return;
+  if(mode==='d'){
+    let ut=G.txs.filter(x=>x.memberId==G.cu.id);
+    if(!ut.length){el.innerHTML=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noDepTxt')}</div>`;return;}
+    el.innerHTML=ut.slice().reverse().map(tx=>`<div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:7px;border:1px solid ${tx.status==='confirmed'?'rgba(16,185,129,.15)':tx.status==='rejected'?'rgba(239,68,68,.15)':'rgba(245,158,11,.15)'}">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+<div style="display:flex;align-items:center;gap:6px"><span>${ICO[tx.method]||'💳'}</span><div><div style="font-size:11px;font-weight:700;color:#E2E8F0">${G.ag[tx.method]?.name}</div><div style="font-size:9px;color:#475569">${tx.date}</div></div></div>
+<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:#10B981">৳${tx.amount.toLocaleString()}</div><span class="bdg ${tx.status==='confirmed'?'bok':tx.status==='rejected'?'brj':'bpn'}">${t(tx.status==='confirmed'?'confirmed':tx.status==='rejected'?'rejected':'pending')}</span></div></div>
+<div style="font-size:9px;color:#374151">TX: <span style="color:#A78BFA">${tx.txId}</span> · 📱 ${tx.senderPhone}</div></div>`).join('');
+  } else if(mode==='c'){
+    let ct=G.ctxs.filter(x=>x.upId==G.cu.id);
+    if(!ct.length){el.innerHTML=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noCommTxt')}</div>`;return;}
+    el.innerHTML=ct.slice().reverse().map(x=>`<div style="background:rgba(16,185,129,.04);border-radius:10px;padding:10px 12px;margin-bottom:7px;border:1px solid rgba(16,185,129,.12)">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:11px;font-weight:700;color:#E2E8F0">💰 Commission</div><div style="font-size:9px;color:#475569">from: ${x.from} · Lv${x.depth} · ${x.date}</div></div>
+<div style="font-size:13px;font-weight:700;color:#10B981">+৳${x.amount.toLocaleString()}</div></div></div>`).join('');
+  } else {
+    let uw=G.wds.filter(x=>x.memberId==G.cu.id);
+    el.innerHTML=uw.length?uw.slice().reverse().map(w=>wdCard(w)).join(''):`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noWdTxt')}</div>`;
+  }
+}
+
+// USER TREE
+function renderUserTree(){
+  let el=$('uTW');if(!el)return;el.innerHTML='';
+  G.uTsel=null;$('uTSel').style.display='none';
+  let u=findNode(G.cu.id);if(!u)return;
+  el.appendChild(buildTreeNode(u,true,false));
+}
+
+function buildTreeNode(node,isRoot,isAdmin){
+  let c=COL[Math.min(node.level,7)];
+  let isMe=G.cu&&node.id==G.cu.id;
+  let sel=G.uTsel&&G.uTsel.id==node.id;
+  let w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;align-items:center';
+  let box=document.createElement('div');
+  box.style.cssText=`background:${sel?`linear-gradient(135deg,${c},${c}bb)`:isMe?`rgba(${hexToRgb(c)},.18)`:'rgba(255,255,255,.04)'};border:2px solid ${sel||isMe?c:c+'44'};border-radius:8px;padding:5px 8px;min-width:66px;text-align:center;cursor:${isMe?'default':'pointer'};user-select:none;box-shadow:${sel||isMe?`0 0 10px ${c}44`:''}`;
+  let avHTML=node.avatar?`<div style="width:28px;height:28px;border-radius:50%;overflow:hidden;margin:0 auto 2px;border:1px solid ${c}55"><img src="${node.avatar}" style="width:100%;height:100%;object-fit:cover"/></div>`:'';
+  box.innerHTML=`${avHTML}<div style="color:${sel||isMe?'#fff':c};font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;max-width:62px;text-overflow:ellipsis">${node.name}</div><div style="color:rgba(255,255,255,.3);font-size:7px;margin-top:1px">${isMe?'★ YOU':'Lv'+node.level}</div><div style="color:rgba(255,255,255,.2);font-size:7px">${node.children.length}/${MXR}</div>`;
+  if(!isMe)box.onclick=function(){G.uTsel=(G.uTsel&&G.uTsel.id==node.id)?null:node;renderUserTree();showUTSel();};
+  w.appendChild(box);
+  if(node.children.length>0){
+    let ln=document.createElement('div');ln.style.cssText=`width:2px;height:11px;background:${c}33`;w.appendChild(ln);
+    let row=document.createElement('div');row.style.cssText='display:flex;align-items:flex-start';
+    node.children.forEach(ch=>{
+      let cw=document.createElement('div');cw.style.cssText='display:flex;flex-direction:column;align-items:center;padding:0 3px';
+      let l=document.createElement('div');l.style.cssText=`width:2px;height:11px;background:${COL[Math.min(ch.level,7)]}33`;
+      cw.appendChild(l);cw.appendChild(buildTreeNode(ch,false,false));row.appendChild(cw);
+    });
+    w.appendChild(row);
+  }
+  return w;
+}
+
+function showUTSel(){
+  let el=$('uTSel');if(!el)return;
+  if(!G.uTsel){el.style.display='none';return;}
+  let n=G.uTsel,bal=n.balance||0;
+  el.style.display='block';
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;align-items:center;gap:8px">
+${n.avatar?`<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid ${COL[Math.min(n.level,7)]}55"><img src="${n.avatar}" style="width:100%;height:100%;object-fit:cover"/></div>`:''}
+<div><div style="font-weight:700;color:#A78BFA;font-size:12px">${n.name}</div><div style="font-size:9px;color:#374151;font-family:monospace">${n.referralCode} · Lv${n.level} · ${n.children.length}/${MXR}</div><div style="font-size:9px;color:#374151">📱 ${n.phone}</div></div></div>
+<div style="text-align:right"><div style="color:#10B981;font-weight:700;font-size:12px">৳${bal.toLocaleString()}</div><div style="font-size:8px;color:#374151">${t('balLbl')}</div></div></div>`;
+}
+
+// ADMIN HEADER & MEMBER LIST
+function aHdr(){
+  let an=findNode(1),bal=an?.balance||0;
+  let totConf=G.txs.filter(x=>x.status==='confirmed').reduce((s,x)=>s+x.amount,0);
+  let adminRate=Math.max(0,1-CR.reduce((s,r)=>s+r,0));
+  let el=$('aBal');
+  if(el)el.textContent=`Balance: ৳${bal.toLocaleString()} · Profit(${(adminRate*100).toFixed(1)}%): ৳${Math.round(totConf*adminRate).toLocaleString()}`;
+  let pndDep=G.txs.filter(x=>x.status==='pending').length;
+  let pndWd=G.wds.filter(x=>x.status==='pending').length;
+  let pnd=pndDep+pndWd;
+  let pb=$('aPend');
+  if(pb){pnd>0?(pb.style.display='block',pb.textContent='⏳ '+pnd):(pb.style.display='none');}
+  let db=$('aDepBdg');if(db){pndDep>0?(db.style.display='',db.textContent=pndDep):(db.style.display='none');}
+  let wb=$('aWdBdg');if(wb){pndWd>0?(wb.style.display='',wb.textContent=pndWd):(wb.style.display='none');}
+}
+
+function renderMembers(q=''){
+  let ed=$('aEdit'),ls=$('aList');
+  if(ed)ed.style.display='none';if(ls)ls.style.display='block';
+  let ms=allMembers();
+  let fms=q?ms.filter(m=>m.name.toLowerCase().includes(q.toLowerCase())||m.referralCode.toLowerCase().includes(q.toLowerCase())||m.phone.includes(q)||String(m.id)===q):ms;
+  if(!ls)return;
+  ls.innerHTML=`<div class="g2">
+<div class="stat"><div class="sv" style="color:#6366F1">${ms.length}</div><div class="sl">${t('totalMembers')}</div></div>
+<div class="stat"><div class="sv" style="color:#10B981">৳${(ms.reduce((s,m)=>s+(m.deposit||0),0)/1000).toFixed(0)}k</div><div class="sl">${t('totalDeposits')}</div></div></div>
+<div class="srch">
+  <span style="font-size:16px">🔍</span>
+  <input placeholder="নাম, কোড, মোবাইল বা ID দিয়ে খুঁজুন..." value="${q}" oninput="renderMembers(this.value)" id="srchInp"/>
+  ${q?'<button onclick="renderMembers(\'\')" style="background:none;border:none;color:#64748B;font-size:16px;cursor:pointer">✕</button>':''}
+</div>
+${fms.length===0?`<div style="text-align:center;padding:24px;color:#374151;font-size:13px">🔍 "${q}" — কোনো সদস্য পাওয়া যায়নি</div>`:`
+<div style="background:rgba(255,255,255,.02);border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.05)">
+${fms.map(m=>{let c=COL[Math.min(m.level,7)];return`<div class="mr">
+${avEl(m,32)}
+<div style="flex:1;min-width:0;margin-left:8px"><div style="font-size:11px;font-weight:700;color:#E2E8F0">${m.name}</div><div style="font-size:9px;color:#374151;font-family:monospace">${m.referralCode} · <span style="color:${c}">Lv${m.level}</span> · ${m.children.length}/${MXR}</div></div>
+<div style="text-align:right;margin-right:6px"><div style="color:#10B981;font-size:10px;font-weight:700">৳${(m.balance||0).toLocaleString()}</div></div>
+<button onclick="openEdit(${m.id})" style="background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#A78BFA;border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer">✏️</button>
+</div>`;}).join('')}</div>`}`;
+}
+
+// PART 3 — Admin: Edit, Tree, Deposits, Withdrawals, Agents, Commission, Settings, QR
+function openEdit(id){
+  let m=findNode(id);if(!m)return;
+  let ed=$('aEdit'),ls=$('aList');
+  if(ed)ed.style.display='block';if(ls)ls.style.display='none';
+  let c=COL[Math.min(m.level,7)];
+  ed.innerHTML=`<button class="bk" onclick="closeEdit()">‹ ${t('back')}</button>
+<div style="display:flex;justify-content:center;margin-bottom:14px"><div style="position:relative">
+${m.avatar?`<div class="av" style="width:64px;height:64px;background:transparent;border:3px solid ${c}55"><img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="av" style="width:64px;height:64px;background:linear-gradient(135deg,${c},${c}99);border:3px solid ${c}55;font-size:23px">${m.name[0]}</div>`}
+<label style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:#6366F1;border:2px solid #080812;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer">📷<input type="file" accept="image/*" onchange="admAvUp(event,${m.id})" style="display:none"/></label>
+</div></div>
+<div class="msg" id="aeMsg"></div>
+<div class="card">
+<div class="sttl">👤 ${t('persInfoTitle')}</div>
+<label>Name</label><input id="ae-n" value="${m.name}"/>
+<label>Mobile</label><input id="ae-ph" type="tel" value="${m.phone}"/>
+<label>NID</label><input id="ae-ni" value="${m.nid}"/>
+<label>Referral Code (English only)</label><input id="ae-rc" value="${m.referralCode}" style="font-family:monospace;text-transform:uppercase" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"/>
+</div>
+<div class="card">
+<div class="sttl">💰 Financial</div>
+<label>${t('balLbl')} (৳)</label><input id="ae-bl" type="number" value="${m.balance||0}"/>
+<label>Deposit (৳)</label><input id="ae-dp" type="number" value="${m.deposit||0}"/>
+</div>
+<div class="card">
+<div class="sttl">🔒 Password</div>
+<label>${t('newPwChangeLbl')}</label>
+<div style="position:relative;margin-bottom:10px"><input id="ae-np" type="password" placeholder="Min 6 characters" style="margin-bottom:0;padding-right:42px"/><button onclick="tp('ae-np',this)" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#64748B;cursor:pointer">👁️</button></div>
+</div>
+<button class="btn btn-green" onclick="saveEdit(${m.id})">${t('saveChangesBtn')}</button>`;
+}
+
+function admAvUp(e,id){
+  let f=e.target.files[0];if(!f)return;
+  if(f.size>500000){flash('aFlash',L==='bn'?'❌ ছবি ৫০০KB এর বেশি নয়':'❌ Image must be under 500KB','er');return;}
+  let r=new FileReader();
+  r.onload=ev=>{updNode(id,n=>({...n,avatar:ev.target.result}));openEdit(id);flash('aFlash',L==='bn'?'✅ ছবি আপলোড!':'✅ Photo uploaded!','ok');};
+  r.readAsDataURL(f);
+}
+
+function closeEdit(){
+  let ed=$('aEdit'),ls=$('aList');
+  if(ed)ed.style.display='none';if(ls)ls.style.display='block';
+  renderMembers();
+}
+
+function saveEdit(id){
+  let n=$('ae-n').value.trim(),ph=$('ae-ph').value.trim();
+  let ni=$('ae-ni').value.trim(),rc=$('ae-rc').value.trim().toUpperCase();
+  let bl=parseFloat($('ae-bl').value)||0,dp=parseFloat($('ae-dp').value)||0;
+  let np=$('ae-np').value.trim();
+  if(!n){msg('aeMsg',L==='bn'?'❌ নাম দিন':'❌ Enter name','er');return;}
+  updNode(id,m=>({...m,name:n,phone:ph,nid:ni,referralCode:rc||m.referralCode,balance:bl,deposit:dp,...(np.length>=6?{password:np}:{})}));
+  msg('aeMsg',L==='bn'?'✅ তথ্য আপডেট!':'✅ Updated!','ok');
+  setTimeout(()=>closeEdit(),1400);
+}
+
+// ADMIN TREE
+function renderAdminTree(){
+  let el=$('aTW');if(!el)return;el.innerHTML='';
+  G.aTsel=null;let ts=$('aTSel');if(ts)ts.style.display='none';
+  el.appendChild(buildAdminTreeNode(G.tree));
+}
+
+function buildAdminTreeNode(node){
+  let c=COL[Math.min(node.level,7)];
+  let sel=G.aTsel&&G.aTsel.id==node.id;
+  let w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;align-items:center';
+  let box=document.createElement('div');
+  box.style.cssText=`background:${sel?`linear-gradient(135deg,${c},${c}cc)`:'rgba(255,255,255,.05)'};border:2px solid ${sel?c:c+'55'};border-radius:10px;padding:6px 10px;min-width:72px;max-width:90px;text-align:center;cursor:pointer;user-select:none;transition:all .15s;box-shadow:${sel?`0 0 12px ${c}55`:''}`;
+  let avPart=node.avatar?
+    `<div style="width:30px;height:30px;border-radius:50%;overflow:hidden;margin:0 auto 3px;border:2px solid ${c}66"><img src="${node.avatar}" style="width:100%;height:100%;object-fit:cover"/></div>`:
+    `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,${c},${c}88);border:2px solid ${c}44;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;margin:0 auto 3px">${(node.name||'?')[0]}</div>`;
+  box.innerHTML=`${avPart}<div style="font-size:10px;font-weight:700;color:${sel?'#fff':c};word-break:break-word;line-height:1.2;margin-bottom:2px">${node.name}</div><div style="font-size:8px;color:rgba(255,255,255,.35);line-height:1.2">#${node.id} · Lv${node.level} · ${node.children.length}/${MXR}</div>`;
+  box.onclick=function(){G.aTsel=(G.aTsel&&G.aTsel.id==node.id)?null:node;renderAdminTree();showATSel();};
+  w.appendChild(box);
+  if(node.children.length>0){
+    let ln=document.createElement('div');ln.style.cssText=`width:2px;height:13px;background:${c}44`;w.appendChild(ln);
+    if(node.children.length>1){
+      let hline=document.createElement('div');
+      hline.style.cssText=`height:2px;background:${c}33;align-self:stretch;margin:0 36px`;
+      w.appendChild(hline);
+    }
+    let row=document.createElement('div');row.style.cssText='display:flex;align-items:flex-start;gap:0';
+    node.children.forEach(ch=>{
+      let chc=COL[Math.min(ch.level,7)];
+      let cw=document.createElement('div');cw.style.cssText='display:flex;flex-direction:column;align-items:center;padding:0 4px';
+      let vl=document.createElement('div');vl.style.cssText=`width:2px;height:13px;background:${chc}44`;
+      cw.appendChild(vl);cw.appendChild(buildAdminTreeNode(ch));row.appendChild(cw);
+    });
+    w.appendChild(row);
+  }
+  return w;
+}
+
+function showATSel(){
+  let el=$('aTSel');if(!el)return;
+  if(!G.aTsel){el.style.display='none';return;}
+  let n=G.aTsel,bal=n.balance||0,c=COL[Math.min(n.level,7)];
+  el.style.display='block';
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="display:flex;align-items:center;gap:8px">
+${n.avatar?`<div style="width:40px;height:40px;border-radius:50%;overflow:hidden;border:2px solid ${c}55"><img src="${n.avatar}" style="width:100%;height:100%;object-fit:cover"/></div>`:`<div class="av" style="width:40px;height:40px;background:linear-gradient(135deg,${c},${c}99);border:2px solid ${c}55;font-size:15px">${n.name[0]}</div>`}
+<div><div style="font-weight:700;color:#FCD34D;font-size:13px">${n.name}</div>
+<div style="font-size:9px;color:#374151;font-family:monospace">${n.referralCode} · Lv${n.level} · ${n.children.length}/${MXR}</div>
+<div style="font-size:9px;color:#374151">📱 ${n.phone}</div></div></div>
+<div style="text-align:right"><div style="color:#10B981;font-weight:700;font-size:13px">৳${bal.toLocaleString()}</div><div style="font-size:8px;color:#374151">${t('balLbl')}</div></div></div>
+${n.level>0?`<button onclick="adminEnterUser(${n.id})" style="width:100%;padding:9px;border-radius:9px;border:none;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;font-size:12px;font-weight:700;cursor:pointer">🔑 Enter ${n.name}'s Account</button>`:''}
+<button onclick="openEdit(${n.id})" style="width:100%;padding:8px;margin-top:5px;border-radius:9px;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.1);color:#A78BFA;font-size:11px;font-weight:700;cursor:pointer">✏️ Edit Member</button>`;
+}
+
+function adminEnterUser(id){
+  let u=findNode(id);if(!u||u.level===0)return;
+  G.cu=u;save();
+  show('s-app');renderProfile();
+  flash('uFlash',`👑 Admin viewing as: <b>${u.name}</b> &nbsp; <button onclick="adminReturn()" style="background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.4);color:#FCD34D;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer">← Return to Admin</button>`,'ok');
+}
+
+function adminReturn(){
+  let admin=findNode(1);if(!admin)return;
+  G.cu=admin;save();show('s-admin');renderMembers();aHdr();
+}
+
+// ADMIN — DEPOSITS
+function renderDeps(){
+  aHdr();
+  let pnd=G.txs.filter(x=>x.status==='pending'),all=G.txs;
+  let html='';
+  if(pnd.length){
+    html+=`<div style="font-size:12px;font-weight:700;color:#F87171;margin-bottom:8px">⏳ ${t('pending')} (${pnd.length})</div>`;
+    html+=pnd.map(tx=>`<div style="background:rgba(239,68,68,.06);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid rgba(239,68,68,.15)">
+<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:12px;font-weight:700;color:#E2E8F0">${tx.memberName} ${ICO[tx.method]||''}</div><div style="font-size:13px;font-weight:700;color:#10B981">৳${tx.amount.toLocaleString()}</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;margin-bottom:8px">
+<div><span style="color:#475569">Method: </span><span style="color:#FCD34D">${G.ag[tx.method]?.name}</span></div>
+<div><span style="color:#475569">Date: </span><span style="color:#CBD5E1">${tx.date}</span></div>
+<div><span style="color:#475569">TX: </span><span style="color:#A78BFA;font-weight:700">${tx.txId}</span></div>
+<div><span style="color:#475569">Mobile: </span><span style="color:#CBD5E1">${tx.senderPhone}</span></div>
+</div>
+<button class="vbtn" onclick="doVerify(${tx.id})">${t('verifyDistBtn')}</button>
+<button class="rbtn" onclick="doRej(${tx.id},'dep')">${t('cancelBtn')}</button>
+</div>`).join('');
+  }
+  if(all.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:8px;margin-top:${pnd.length?'12px':'0'}">All (${all.length})</div>`;
+    html+=all.slice().reverse().map(tx=>`<div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:6px;border:1px solid ${tx.status==='confirmed'?'rgba(16,185,129,.12)':tx.status==='rejected'?'rgba(239,68,68,.12)':'rgba(245,158,11,.12)'}">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+<div style="font-size:11px;font-weight:700;color:#E2E8F0">${tx.memberName} ${ICO[tx.method]||''}</div>
+<div style="display:flex;gap:6px;align-items:center"><span style="font-size:12px;font-weight:700;color:#10B981">৳${tx.amount.toLocaleString()}</span><span class="bdg ${tx.status==='confirmed'?'bok':tx.status==='rejected'?'brj':'bpn'}">${t(tx.status==='confirmed'?'confirmed':tx.status==='rejected'?'rejected':'pending')}</span></div></div>
+<div style="font-size:9px;color:#475569">TX: ${tx.txId} · ${tx.date}</div></div>`).join('');
+  }
+  if(!all.length)html=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noDepTxt')}</div>`;
+  $('aDepList').innerHTML=html;
+}
+
+function doVerify(txId){
+  let tx=G.txs.find(x=>x.id==txId);if(!tx||tx.status!=='pending')return;
+  tx.status='confirmed';
+  let dep=tx.amount;
+  let uplines=getUpline(tx.memberId);
+  let totalGiven=0;
+  uplines.forEach((u,i)=>{
+    if(i>=CR.length)return;
+    let amt=Math.round(dep*CR[i]*100)/100;
+    totalGiven+=amt;
+    updNode(u.id,n=>({...n,balance:(n.balance||0)+amt}));
+    G.ctxs.push({id:nid(),upId:u.id,from:tx.memberName,amount:amt,depth:i+1,date:tx.date});
+  });
+  let adminAmt=Math.round((dep-totalGiven)*100)/100;
+  updNode(1,n=>({...n,balance:(n.balance||0)+adminAmt}));
+  save();
+  if(G.cu&&G.cu.level>0)G.cu=findNode(G.cu.id)||G.cu;
+  aHdr();
+  flash('aFlash',L==='bn'?`✅ ভেরিফাই! ৳${dep.toLocaleString()} বিতরণ হয়েছে।`:`✅ Verified! ৳${dep.toLocaleString()} distributed.`,'ok');
+  renderDeps();
+}
+
+function doRej(id,type){
+  if(type==='dep'){let tx=G.txs.find(x=>x.id==id);if(tx)tx.status='rejected';}
+  else{let wd=G.wds.find(x=>x.id==id);if(wd&&wd.status==='pending'){wd.status='rejected';updNode(wd.memberId,n=>({...n,balance:(n.balance||0)+wd.amount}));}}
+  save();aHdr();
+  if(type==='dep')renderDeps();else renderWds();
+}
+
+// ADMIN — WITHDRAWALS
+function renderWds(){
+  aHdr();
+  let pnd=G.wds.filter(x=>x.status==='pending'),all=G.wds;
+  let html='';
+  if(pnd.length){
+    html+=`<div style="font-size:12px;font-weight:700;color:#F87171;margin-bottom:8px">⏳ ${t('pending')} (${pnd.length})</div>`;
+    html+=pnd.map(w=>`<div style="background:rgba(245,158,11,.06);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid rgba(245,158,11,.2)">
+<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:12px;font-weight:700;color:#E2E8F0">${w.memberName} ${ICO[w.method]||''}</div><div style="font-size:13px;font-weight:700;color:#F59E0B">৳${w.amount.toLocaleString()}</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;margin-bottom:8px">
+<div><span style="color:#475569">Method: </span><span style="color:#FCD34D">${G.ag[w.method]?.name}</span></div>
+<div><span style="color:#475569">Date: </span><span style="color:#CBD5E1">${w.date}</span></div>
+<div><span style="color:#475569">Account: </span><span style="color:#A78BFA;font-weight:700">${w.phone}</span></div>
+<div><span style="color:#475569">Member #: </span><span style="color:#CBD5E1">${w.memberId}</span></div>
+</div>
+<button class="vbtn" onclick="doWdSuc(${w.id})">${t('paySuccessBtn')}</button>
+<button class="rbtn" onclick="doRej(${w.id},'wd')">${t('cancelBtn')}</button></div>`).join('');
+  }
+  if(all.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:8px;margin-top:${pnd.length?'12px':'0'}">All (${all.length})</div>`;
+    html+=all.slice().reverse().map(w=>`<div style="background:rgba(255,255,255,.02);border-radius:10px;padding:10px 12px;margin-bottom:6px;border:1px solid ${w.status==='success'?'rgba(16,185,129,.12)':w.status==='rejected'?'rgba(239,68,68,.12)':'rgba(245,158,11,.12)'}">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+<div style="font-size:11px;font-weight:700;color:#E2E8F0">${w.memberName} — ${w.phone}</div>
+<div style="display:flex;gap:6px;align-items:center"><span style="font-size:12px;font-weight:700;color:#F59E0B">৳${w.amount.toLocaleString()}</span><span class="bdg ${w.status==='success'?'bok':w.status==='rejected'?'brj':'bpn'}">${t(w.status==='success'?'success':w.status==='rejected'?'rejected':'pending')}</span></div></div>
+<div style="font-size:9px;color:#475569">${G.ag[w.method]?.name} · ${w.date}</div></div>`).join('');
+  }
+  if(!all.length)html=`<div style="text-align:center;color:#374151;font-size:12px;padding:28px 0">${t('noWdTxt')}</div>`;
+  $('aWdList').innerHTML=html;
+}
+
+function doWdSuc(wdId){
+  let wd=G.wds.find(x=>x.id==wdId);if(!wd||wd.status!=='pending')return;
+  wd.status='success';save();aHdr();
+  flash('aFlash',`🔔 ${wd.memberName}: ৳${wd.amount.toLocaleString()} — "Your withdrawal of ৳${wd.amount.toLocaleString()} TK is successful!"`,'ok');
+  renderWds();
+}
+
+// ADMIN — AGENTS
+function renderAgnts(){
+  $('aAgList').innerHTML=
+    Object.entries(G.ag).map(([k,ag])=>`<div class="card">
+<div style="display:flex;align-items:center;gap:7px;margin-bottom:11px"><span style="font-size:17px">${ICO[k]}</span><div style="font-size:13px;font-weight:700;color:#E2E8F0">${ag.name}</div></div>
+<label>${t('agentNumLbl')}</label><input id="an-${k}" type="tel" value="${ag.number}"/>
+<label>${t('agentNameLbl')}</label><input id="anm-${k}" value="${ag.name}"/>
+</div>`).join('')+
+    `<button class="btn btn-green" onclick="saveAgnts()">${t('saveAgentsBtn')}</button>`;
+}
+
+function saveAgnts(){
+  Object.keys(G.ag).forEach(k=>{
+    G.ag[k].number=(document.getElementById('an-'+k).value||'').trim();
+    G.ag[k].name=(document.getElementById('anm-'+k).value||'').trim();
+  });
+  save();flash('aFlash',L==='bn'?'✅ সংরক্ষিত!':'✅ Saved!','ok');
+}
+
+// ADMIN — COMMISSION EDITOR
+function renderCommEdit(){
+  const cls=["#10B981","#3B82F6","#EC4899","#8B5CF6"];
+  const lbs=L==='bn'?["১ম লেভেল (B)","২য় লেভেল (C)","৩য় লেভেল (D)","৪র্থ লেভেল (E)"]:["Level 1 (B)","Level 2 (C)","Level 3 (D)","Level 4 (E)"];
+  $('aCommEdit').innerHTML=`<div class="card">
+<div class="sttl">${t('commEditorLbl')}</div>
+<div style="font-size:11px;color:#64748B;margin-bottom:13px">${t('commEdNote')}</div>
+${CR.map((r,i)=>`<div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06);margin-bottom:9px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+<div style="font-size:12px;font-weight:700;color:${cls[i]}">${lbs[i]}</div>
+<div style="display:flex;align-items:center;gap:7px">
+<input id="cri-${i}" type="number" step="0.1" min="0" max="80" value="${(r*100).toFixed(1)}" oninput="updCR(${i},this.value)" style="width:60px;text-align:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#E2E8F0;border-radius:7px;padding:5px;font-size:12px;font-weight:700;margin-bottom:0"/>
+<span id="crd-${i}" style="font-size:10px;color:#475569;white-space:nowrap">= ৳${(DEP*r).toLocaleString()}</span></div></div>
+<input type="range" min="0" max="80" step="0.5" value="${(r*100).toFixed(1)}" id="crs-${i}" oninput="updCR(${i},this.value);$('cri-${i}').value=parseFloat(this.value).toFixed(1)" style="width:100%;accent-color:${cls[i]};height:18px;background:none;border:none;padding:0;margin:0"/>
+</div>`).join('')}
+<div id="crTot" style="background:rgba(245,158,11,.08);border-radius:9px;padding:10px 12px;border:1px solid rgba(245,158,11,.2);font-size:12px;text-align:center;margin-bottom:13px"></div>
+<button class="btn btn-green" onclick="saveCommRates()">${t('saveCommBtn')}</button>
+</div>`;
+  updCRTot();
+}
+
+function updCR(i,v){CR[i]=parseFloat(v)/100||0;let el=document.getElementById('crd-'+i);if(el)el.textContent='= ৳'+(DEP*CR[i]).toLocaleString();updCRTot();}
+
+function updCRTot(){
+  let tot=CR.reduce((s,r)=>s+r,0)*100,ash=(100-tot).toFixed(1);
+  let el=$('crTot');if(!el)return;
+  el.innerHTML=`<span style="color:${tot>95?'#F87171':tot>88?'#FCD34D':'#34D399'}">${t('totCommRate')}: <b>${tot.toFixed(1)}%</b></span> &nbsp;|&nbsp; <span style="color:#64748B">${t('adminProfitLbl')}: ${ash}% (৳${(DEP*parseFloat(ash)/100).toLocaleString()})</span>`;
+}
+
+function saveCommRates(){save();flash('aFlash',L==='bn'?`✅ কমিশন হার আপডেট!`:`✅ Commission rates updated!`,'ok');}
+
+// ADMIN — SETTINGS
+function renderSets(){
+  let an=findNode(1),ms=allMembers();
+  let adminRate=Math.max(0,1-CR.reduce((s,r)=>s+r,0));
+  $('aSetList').innerHTML=`<div class="card">
+<div class="sttl">📊 System Statistics</div>
+${[[t('totalMembers'),ms.length,'#6366F1'],[t('totalDeposits'),'৳'+ms.reduce((s,m)=>s+(m.deposit||0),0).toLocaleString(),'#10B981'],['Confirmed TX',G.txs.filter(x=>x.status==='confirmed').length,'#34D399'],['Pending TX',G.txs.filter(x=>x.status==='pending').length,'#FCD34D'],['Success Withdrawals',G.wds.filter(x=>x.status==='success').length,'#F472B6'],['Pending Withdrawals',G.wds.filter(x=>x.status==='pending').length,'#F59E0B'],[t('adminBalance')+' ('+(adminRate*100).toFixed(1)+'%)', '৳'+(an?.balance||0).toLocaleString(),'#FCD34D']].map(([l,v,c])=>`<div class="row"><span style="font-size:11px;color:#94A3B8">${l}</span><span style="font-size:12px;color:${c};font-weight:700">${v}</span></div>`).join('')}
+</div>
+<div style="background:rgba(99,102,241,.06);border-radius:11px;padding:13px;border:1px solid rgba(99,102,241,.2);margin-top:5px">
+<div class="sttl" style="color:#A78BFA">🔐 Admin Credentials পরিবর্তন</div>
+<div style="font-size:11px;color:#64748B;margin-bottom:10px">${L==='bn'?'নতুন username ও password Firebase-এ সুরক্ষিতভাবে সংরক্ষিত হবে।':'New credentials will be saved securely in Firebase.'}</div>
+<label style="font-size:11px;color:#94A3B8">নতুন Username</label>
+<input id="adm-un" placeholder="নতুন username" style="margin-bottom:8px" value="${G._adminUser}"/>
+<label style="font-size:11px;color:#94A3B8">নতুন Password</label>
+<div style="position:relative;margin-bottom:10px"><input id="adm-pw" type="password" placeholder="নতুন password (min 6)" style="margin-bottom:0;padding-right:42px"/><button onclick="tp('adm-pw',this)" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#64748B;cursor:pointer">👁️</button></div>
+<button onclick="saveAdminCreds()" style="width:100%;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;font-size:12px;font-weight:700;cursor:pointer">💾 Credentials আপডেট করুন</button>
+</div>
+<div style="background:rgba(239,68,68,.06);border-radius:11px;padding:13px;border:1px solid rgba(239,68,68,.2);margin-top:10px">
+<div class="sttl" style="color:#F87171">⚠️ Reset Data</div>
+<div style="font-size:11px;color:#64748B;margin-bottom:10px">${L==='bn'?'সব সদস্য ও লেনদেন ডেটা মুছবে। Admin আইডি থাকবে।':'Clears all members & transactions. Admin account remains.'}</div>
+<button onclick="resetAllData()" style="width:100%;padding:10px;border-radius:9px;border:none;background:rgba(239,68,68,.2);color:#F87171;font-size:12px;font-weight:700;cursor:pointer">🗑️ Reset All Data</button>
+</div>`;
+}
+
+function resetAllData(){
+  if(!confirm(L==='bn'?'সব ডেটা মুছে ফেলবেন? এটি আর ফেরানো যাবে না!':'Delete all data? This cannot be undone!'))return;
+  // Tree রিসেট — admin থাকবে
+  G.tree=mkNode(1,'ADMIN',0,null,G.tree.phone||'01700000000',G.tree.nid||'0000000000000',G.tree.password||'',[]);
+  G.txs=[];G.wds=[];G.ctxs=[];G.notices=[];G.tickets=[];G.msgs=[];G._id=1;
+  save();
+  flash('aFlash',L==='bn'?'✅ সব ডেটা রিসেট হয়েছে!':'✅ All data has been reset!','ok');
+  renderMembers();aHdr();
+}
+
+// QR CODE (qrcode.js লাইব্রেরি ব্যবহার করা হচ্ছে)
+function openQR(){
+  if(!G.cu)return;
+  let code=G.cu.referralCode;
+  $('qrCode').textContent=code;
+  $('qrName').textContent=G.cu.name+' — RSM LIFE';
+  $('qrModal').classList.add('open');
+  // Clear previous QR and generate fresh with qrcode.js
+  let container=$('qrCanvas');
+  container.innerHTML='';
+  if(typeof QRCode!=='undefined'){
+    _qrInstance=new QRCode(container,{
+      text:'RSM:'+code,
+      width:180,height:180,
+      colorDark:'#1a1a2e',colorLight:'#ffffff',
+      correctLevel:QRCode.CorrectLevel.H
+    });
+  } else {
+    // Fallback: show code as text if library not loaded
+    container.innerHTML='<div style="width:180px;height:180px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#1a1a2e;font-family:monospace;letter-spacing:3px;">'+code+'</div>';
+  }
+}
+
+function closeQR(e){
+  if(e.target===$('qrModal'))
+    $('qrModal').classList.remove('open');
+}
+
+function getShareText(){
+  let u=G.cu;
+  return L==='bn'
+    ?`🌟 RSM LIFE তে যোগ দিন!\n\nআমার রেফারেল কোড: *${u.referralCode}*\nরেজিস্ট্রেশন করুন এবং আয় শুরু করুন।\n\n💰 ৳5,000 বিনিয়োগে ৳${(5000*0.25).toLocaleString()}+ কমিশন পান!`
+    :`🌟 Join RSM LIFE!\n\nMy referral code: *${u.referralCode}*\nRegister and start earning.\n\n💰 Invest ৳5,000 and earn ৳${(5000*0.25).toLocaleString()}+ commission!`;
+}
+
+function openLiveChat(){window.open('https://t.me/+j0D0wlgaAb85OGY1','_blank');}
+
+function shareFB(){
+  flash('uFlash',L==='bn'?'📋 টেক্সট কপি! Facebook-এ পেস্ট করুন':'📋 Text copied! Paste on Facebook','ok');
+  navigator.clipboard&&navigator.clipboard.writeText(getShareText());
+}
+
+function copyQRLink(){
+  let txt=getShareText();
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(()=>{
+      flash('uFlash',L==='bn'?'✅ শেয়ার টেক্সট কপি হয়েছে!':'✅ Share text copied!','ok');
+      let btn=$('copyLinkBtn');
+      if(btn){btn.classList.add('copy-flash');setTimeout(()=>btn.classList.remove('copy-flash'),450);}
+    });
+  }
+}
+
+function downloadQR(){
+  // qrcode.js renders inside a canvas element inside the container div
+  let container=$('qrCanvas');
+  if(!container)return;
+  let canvas=container.querySelector('canvas');
+  if(!canvas){flash('uFlash',L==='bn'?'❌ QR লোড হয়নি, আবার চেষ্টা করুন':'❌ QR not ready, try again','er');return;}
+  let a=document.createElement('a');
+  a.download='RSM-LIFE-'+G.cu.referralCode+'.png';
+  a.href=canvas.toDataURL('image/png');
+  a.click();
+  flash('uFlash',L==='bn'?'✅ QR কোড সেভ হয়েছে!':'✅ QR saved!','ok');
+}
+
+// UPDATE UI — Profile full update
+// UPDATE UI  — প্রোফাইল ট্যাবে সব ফিল্ড আপডেট
+function updateUI() {
+  if (!G || !G.cu) return;
+  let u = findNode(G.cu.id) || G.cu;
+  G.cu = u;
+  let bal = u.balance || 0;
+  let c = COL[Math.min(u.level, 7)];
+  let av = u.avatar
+    ? '<img src="' + u.avatar + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>'
+    : (u.name || '?')[0];
+  let avBg = u.avatar ? 'transparent' : 'linear-gradient(135deg,' + c + ',' + c + '99)';
+
+  // Header
+  let hAv = $('hAv');
+  if (hAv) { hAv.style.background = avBg; hAv.innerHTML = av; }
+  let hN = $('hName'); if (hN) hN.textContent = u.name || '';
+  let hC = $('hCode'); if (hC) hC.textContent = (u.referralCode || '') + ' · Lv' + u.level;
+  let hB = $('hBal');  if (hB) hB.textContent = '৳' + bal.toLocaleString();
+
+  // Sidebar
+  let sbA = $('sbAv');
+  if (sbA) { sbA.style.background = avBg; sbA.innerHTML = av; }
+  let sbN = $('sbName'); if (sbN) sbN.textContent = u.name || '';
+  let sbC = $('sbCode'); if (sbC) sbC.textContent = (u.referralCode || '') + ' · Lv' + u.level;
+  let sbB = $('sbBal');  if (sbB) sbB.textContent = '৳' + bal.toLocaleString();
+
+  // Profile card avatar
+  let pAv = $('pAv');
+  if (pAv) { pAv.style.background = avBg; pAv.innerHTML = av; }
+
+  // Name + badge
+  let lbl = {0:'Admin',1:'A',2:'B',3:'C',4:'D',5:'E',6:'F',7:'G'};
+  let pN  = $('pName');   if (pN)  pN.textContent  = u.name || '';
+  let pSb = $('pSub');    if (pSb) pSb.textContent = '#' + u.id + ' · Level ' + u.level + ' (' + (lbl[u.level]||u.level) + ')';
+  let pBd = $('pBadge');  if (pBd) pBd.textContent = '🏅 ' + (lbl[u.level]||'Level '+u.level) + ' Rank';
+
+  // Balance
+  let pBl = $('pBal');    if (pBl) pBl.textContent = '৳' + bal.toLocaleString();
+  let pBS = $('pBalSub'); if (pBS) pBS.textContent = 'Balance: ৳' + bal.toLocaleString();
+  let wBl = $('wBal');    if (wBl) wBl.textContent = '৳' + bal.toLocaleString();
+
+  // Referral code + slots
+  let pRC = $('pRefCode'); if (pRC) pRC.textContent = u.referralCode || '';
+  let pSl = $('pSlots');   if (pSl) pSl.textContent = 'Slots: ' + (u.children ? u.children.length : 0) + '/' + MXR;
+
+  // Joining date
+  let jd = u.joinedAt
+    ? new Date(u.joinedAt).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'})
+    : 'N/A';
+
+  // Stats grid
+  let pSt = $('pStats');
+  if (pSt) {
+    pSt.innerHTML = [
+      {l:'Team',    v:flat(u).length - 1,                              i:'🌐', c:'#FBBF24'},
+      {l:'Referrals', v:(u.children ? u.children.length : 0)+'/'+MXR, i:'👥', c:'#F472B6'},
+      {l:'Level',   v:lbl[u.level] || u.level,                        i:'🏅', c:'#A78BFA'},
+      {l:'Balance', v:'৳' + bal.toLocaleString(),                     i:'💰', c:'#10B981'},
+    ].map(function(x) {
+      return '<div class="stat">'
+            + '<div style="font-size:15px;margin-bottom:3px">' + x.i + '</div>'
+            + '<div class="sv" style="color:' + x.c + '">' + x.v + '</div>'
+            + '<div class="sl">' + x.l + '</div>'
+            + '</div>';
+    }).join('');
+  }
+
+  // Info table
+  let pIn = $('pInfo');
+  if (pIn) {
+    let nid = u.nid ? u.nid.slice(0,4) + '●●●' + u.nid.slice(-2) : '—';
+    let rows = [
+      {i:'📱', l:'Mobile',        v: u.phone || '—'},
+      {i:'🪪', l:'NID',           v: nid},
+      {i:'🆔', l:'ID',            v: '#' + u.id},
+      {i:'📊', l:'Level',         v: u.level + ' (' + (lbl[u.level]||u.level) + ')'},
+      {i:'📅', l:'Joined',        v: jd},
+      {i:'🔑', l:'Referral Code', v: u.referralCode || '—'},
+    ];
+    pIn.innerHTML = rows.map(function(r) {
+      return '<div class="row" style="padding:8px 12px">'
+            + '<span style="font-size:13px;margin-right:8px">' + r.i + '</span>'
+            + '<span style="flex:1;font-size:11px;color:#64748B">' + r.l + '</span>'
+            + '<span style="font-size:11px;color:#CBD5E1;font-weight:600;'
+            + (r.l === 'Referral Code' ? 'font-family:monospace' : '') + '">'
+            + r.v + '</span>'
+            + '</div>';
+    }).join('');
+  }
+}
+
+
+// Registration form এ Admin code field দেখানো/লুকানো
+function checkAdminFieldVisibility(){
+  let wrap = $('adminCodeWrap');
+  if(!wrap) return;
+  // Admin ইতিমধ্যে আছে? → field লুকাও
+  let adminExists = allNodes().some(function(n){ return n.level===0 && n.phone!==''; });
+  wrap.style.display = adminExists ? 'none' : 'block';
+}
+
+// INIT
+(function () {
+  document.querySelectorAll('.lbtn').forEach(function (b) {
+    var txt = b.textContent.trim();
+    b.classList.toggle(
+      'on',
+      (L === 'en' && (txt === 'English' || txt === 'EN')) ||
+      (L === 'bn' && (txt === 'বাংলা'  || txt === 'বাং'))
+    );
+  });
+  load();
+})();
+
+// ════════════════════════════════════════════════
+// AUTH STATE LISTENER
+// অ্যাপ লোড হলে Firebase auth চেক করে
+// লগইন থাকলে → ড্যাশবোর্ড, না থাকলে → লগইন পেজ
+// ════════════════════════════════════════════════
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    // ইউজার লগইন আছে — Firestore থেকে real-time ডেটা শোনো
+    let unsub = db.collection('rsm').doc('rsmlife_v3').onSnapshot(function(doc) {
+      if (doc.exists) {
+        let data = doc.data();
+        if (data && data.tree) {
+          // tree ও অন্য state apply করি
+          if (typeof applySnap === 'function') applySnap(doc);
+          // current user খুঁজি phone বা uid দিয়ে
+          let matched = null;
+          if (typeof allNodes === 'function') {
+            matched = allNodes().find(function(n) {
+              return n.uid === user.uid || n.phone === user.email;
+            });
+          }
+          if (matched) {
+            G.cu = matched;
+          }
+        }
+        // UI আপডেট
+        if (G.cu) {
+          if (typeof updateUI === 'function') updateUI();
+          if (typeof renderProfile === 'function') renderProfile();
+        }
+      }
+    });
+    if (typeof _unsubscribe !== 'undefined') _unsubscribe = unsub;
+  } else {
+    // লগইন নেই — login screen দেখাও
+    if (typeof show === 'function') show('s-login');
+  }
+});
+
+console.log('RSM LIFE App Initialized ✅');
+
+
+
+
+</script>
+</body>
+</html>
